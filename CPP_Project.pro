@@ -27,6 +27,7 @@ HEADERS += \
     expr.hpp \
     exprlexer.hpp \
     exprparser.hpp \
+    syntaxerror.hpp \
     token.hpp \
     typealiases.hpp \
     value.hpp
@@ -34,5 +35,6 @@ SOURCES += expr.cpp main.cpp \
     binaryop.cpp \
     exprlexer.cpp \
     exprparser.cpp \
+    syntaxerror.cpp \
     token.cpp \
     value.cpp
