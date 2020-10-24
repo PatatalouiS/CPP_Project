@@ -1,10 +1,17 @@
-#include "expr.h"
-#include <iostream>
 
+#include <iostream>
+#include "value.hpp"
+#include "binaryop.hpp"
+#include "exprlexer.hpp"
+#include "exprparser.hpp"
+#include "expr.hpp"
+
+using namespace std;
 
 int main() {
 
-    Expr expr("6 / 12 * 7 / 3865 - 78");
+    Expr expr("3 + 2 * 4");
+    cout << expr.eval() << endl;
     expr.print();
 
     return 0;

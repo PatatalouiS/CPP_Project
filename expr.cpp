@@ -1,104 +1,63 @@
 
-#include "expr.h"
-#include "exprtoken.h"
+
 
 #include <vector>
 #include <algorithm>
 #include <iostream>
 #include <stack>
 #include <string>
-#include <unordered_map>
 
+#include "exprlexer.hpp"
+#include "expr.hpp"
+#include "token.hpp"
+#include "exprparser.hpp"
+#include <stack>
+#include "value.hpp"
 
-using StringVector = std::vector<std::string>;
-using BinaryOperation = std::function<double(const double&, const double&)>;
-using Operations = std::unordered_map<std::string, BinaryOperation>;
-
-
-const Operations OPERATIONS {
-    { PLUS, [](const double& a, const double& b) -> double { return a + b; }},
-    { MINUS, [](const double& a, const double& b) -> double { return a - b; }},
-    { MULTIPLY, [](const double& a, const double& b) -> double { return a * b; }},
-    { DIVIDE, [](const double& a, const double& b) -> double { return a / b; }}
-};
-
-constexpr char SPACE{' '};
+using namespace std;
 
 namespace {
 
-StringVector split(const std::string& s, const char delim = SPACE) {
-    StringVector tokenArray;
-    std::string token;
+template<typename T>
+void deleteVector(vector<T*>& v) {
 
-    for(auto i : s) {
-        if(i != delim) {
-            token.push_back(i);
-        }
-        else {
-            tokenArray.emplace_back(std::move(token));
-            token.clear();
-        }
+    for(auto& val : v) {
+        delete val;
     }
-
-    tokenArray.emplace_back(std::move(token));
-    return tokenArray;
+    v.clear();
 }
 
-std::vector<ExprToken> reverse_polish_notation(const StringVector& tArray) {
-    std::stack<ExprToken> stack;
-    std::vector<ExprToken> out;
-
-    for(const auto& token : tArray) {
-        ExprToken exprToken{ token };
-        // It's a litteral
-        if(!exprToken.isOperator()) {
-            out.push_back(exprToken);
-        }// It's an operator
-        else {
-
-            while(!stack.empty() && stack.top().isPriority(exprToken)){
-                out.push_back(stack.top());
-                stack.pop();
-            }
-
-            stack.push(exprToken);
-        }
-    }
-
-    while(!stack.empty()) {
-        out.push_back(stack.top());
-        stack.pop();
-    }
-
-    return out;
-}
 
 }
 
-Expr::Expr(const std::string& str) : expr(str) {
-}
+Expr::Expr(const std::string& str) :
+    _exprValue(str),
+    _polishedTokens(ExprParser::parse(ExprLexer::tokenize(str)))
+{}
 
 double Expr::eval() const {
-    auto polishArray{reverse_polish_notation(split(expr))};
-    std::stack<ExprToken> stack;
+    stack<Token*> stack;
+    vector<Value> tempResults;
 
-    for(const auto& token : polishArray) {
-        if(!token.isOperator()) {
-            stack.push(token);
-        }
-        else {
-            auto op2{std::stod(stack.top().getStr())};
-            stack.pop();
-            auto op1{std::stod(stack.top().getStr())};
-            stack.pop();
-            auto result{OPERATIONS.at(token.getStr())(op1, op2)};
-            stack.push(std::to_string(result));
-        }
-    }
+       for(auto& token : _polishedTokens) {
+           if(!token->isOperator()) {
+               stack.push(token);
+           }
+           else {
+               auto op2(stack.top()->eval());
+               stack.pop();
+               auto op1(stack.top()->eval());
+               stack.pop();
+               tempResults.push_back({ token->eval(op1, op2) });
+               stack.emplace(&tempResults.back());
+           }
+       }
 
-    return std::stod(stack.top().getStr());
+       return stack.top()->eval();
 }
 
 void Expr::print() {
-    std::cout << "Result : " << eval();
+    for(auto& token : _polishedTokens) {
+        cout << *token << endl;
+    }
 }

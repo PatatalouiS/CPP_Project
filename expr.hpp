@@ -2,12 +2,15 @@
 #define EXPR_H
 
 #include <string>
+#include "token.hpp"
 
 class Expr {
 
     private :
 
-        std::string expr;
+        std::string _exprValue;
+
+        std::vector<Token*> _polishedTokens;
 
     public:
 
