@@ -54,19 +54,23 @@ OBJECTS_DIR   = obj/
 
 SOURCES       = expr.cpp \
 		main.cpp \
+		abstracttoken.cpp \
+		basictoken.cpp \
 		binaryop.cpp \
 		exprlexer.cpp \
 		exprparser.cpp \
 		syntaxerror.cpp \
-		token.cpp \
+		unaryop.cpp \
 		value.cpp 
 OBJECTS       = obj/expr.o \
 		obj/main.o \
+		obj/abstracttoken.o \
+		obj/basictoken.o \
 		obj/binaryop.o \
 		obj/exprlexer.o \
 		obj/exprparser.o \
 		obj/syntaxerror.o \
-		obj/token.o \
+		obj/unaryop.o \
 		obj/value.o
 DIST          = /Users/maximeolivie/Qt/5.12.8/clang_64/mkspecs/features/spec_pre.prf \
 		/Users/maximeolivie/Qt/5.12.8/clang_64/mkspecs/qdevice.pri \
@@ -243,20 +247,25 @@ DIST          = /Users/maximeolivie/Qt/5.12.8/clang_64/mkspecs/features/spec_pre
 		/Users/maximeolivie/Qt/5.12.8/clang_64/mkspecs/features/exceptions.prf \
 		/Users/maximeolivie/Qt/5.12.8/clang_64/mkspecs/features/yacc.prf \
 		/Users/maximeolivie/Qt/5.12.8/clang_64/mkspecs/features/lex.prf \
-		CPP_Project.pro binaryop.hpp \
+		CPP_Project.pro abstracttoken.hpp \
+		basictoken.hpp \
+		binaryop.hpp \
+		evaluabletoken.hpp \
 		expr.hpp \
 		exprlexer.hpp \
 		exprparser.hpp \
 		syntaxerror.hpp \
-		token.hpp \
 		typealiases.hpp \
+		unaryop.hpp \
 		value.hpp expr.cpp \
 		main.cpp \
+		abstracttoken.cpp \
+		basictoken.cpp \
 		binaryop.cpp \
 		exprlexer.cpp \
 		exprparser.cpp \
 		syntaxerror.cpp \
-		token.cpp \
+		unaryop.cpp \
 		value.cpp
 QMAKE_TARGET  = CPP_Project
 DESTDIR       = 
@@ -681,46 +690,63 @@ compiler_clean:
 ####### Compile
 
 obj/expr.o: expr.cpp exprlexer.hpp \
-		token.hpp \
+		evaluabletoken.hpp \
+		abstracttoken.hpp \
 		expr.hpp \
 		exprparser.hpp \
 		value.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/expr.o expr.cpp
 
 obj/main.o: main.cpp value.hpp \
-		token.hpp \
+		evaluabletoken.hpp \
+		abstracttoken.hpp \
 		binaryop.hpp \
 		exprlexer.hpp \
 		exprparser.hpp \
 		expr.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/main.o main.cpp
 
+obj/abstracttoken.o: abstracttoken.cpp abstracttoken.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/abstracttoken.o abstracttoken.cpp
+
+obj/basictoken.o: basictoken.cpp basictoken.hpp \
+		abstracttoken.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/basictoken.o basictoken.cpp
+
 obj/binaryop.o: binaryop.cpp binaryop.hpp \
-		token.hpp
+		evaluabletoken.hpp \
+		abstracttoken.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/binaryop.o binaryop.cpp
 
 obj/exprlexer.o: exprlexer.cpp exprlexer.hpp \
-		token.hpp \
+		evaluabletoken.hpp \
+		abstracttoken.hpp \
 		value.hpp \
 		binaryop.hpp \
-		syntaxerror.hpp
+		syntaxerror.hpp \
+		basictoken.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/exprlexer.o exprlexer.cpp
 
 obj/exprparser.o: exprparser.cpp exprparser.hpp \
-		token.hpp \
+		evaluabletoken.hpp \
+		abstracttoken.hpp \
 		binaryop.hpp \
 		typealiases.hpp \
-		value.hpp
+		value.hpp \
+		basictoken.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/exprparser.o exprparser.cpp
 
 obj/syntaxerror.o: syntaxerror.cpp syntaxerror.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/syntaxerror.o syntaxerror.cpp
 
-obj/token.o: token.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/token.o token.cpp
+obj/unaryop.o: unaryop.cpp unaryop.hpp \
+		evaluabletoken.hpp \
+		abstracttoken.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/unaryop.o unaryop.cpp
 
 obj/value.o: value.cpp value.hpp \
-		token.hpp
+		evaluabletoken.hpp \
+		abstracttoken.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/value.o value.cpp
 
 ####### Install

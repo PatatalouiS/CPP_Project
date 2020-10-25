@@ -4,12 +4,11 @@
 #include <regex>
 #include <unordered_map>
 #include "syntaxerror.hpp"
+#include "basictoken.hpp"
 #include <map>
 
-
-
 using namespace std;
-using LexerAction = function<Token*(const string&)>;
+using LexerAction = function<AbstractToken*(const string&)>;
 
 struct LexerRule {
     regex regex;
@@ -41,10 +40,10 @@ struct LexerRule {
 //};
 
 //const unordered_map<string, LexerAction> patterns {
-//    { "[0-9]+(\\.[0-9]+)?"  , createValue          },
-//    { "(\\+|-|/|\\*)"       , createBinaryOperator },
-//    { "\\s*"                , SCAN_LEXBUF          },
-//    { "."                   , syntaxError          }
+//    { "(+|-)?[0-9]+(\\.[0-9]+)?"  , createValue          },
+//    { "(\\+|-|/|\\*)"             , createBinaryOperator },
+//    { "\\s*"                      , SCAN_LEXBUF          },
+//    { "."                         , syntaxError          }
 //};
 
 const std::vector<LexerRule> patterns {
@@ -61,6 +60,18 @@ const std::vector<LexerRule> patterns {
         }
     },
     {
+        regex("\\("),
+        [](const string&) {
+            return new LPAR();
+        }
+    },
+    {
+        regex("\\)"),
+        [](const string&) {
+            return new RPAR();
+        }
+    },
+    {
         regex("\\s+"),
         [](const string&) {
             return nullptr;
@@ -70,7 +81,8 @@ const std::vector<LexerRule> patterns {
         regex("."),
         [](const string& s) {
             try {
-                throw SyntaxError("Syntax Error : Unknow character \"" + s + "\" in exprlexer.cpp:28");
+                throw SyntaxError("Syntax Error : Unknow character \""
+                                  + s + "\" in exprlexer.cpp:28");
             }
             catch(SyntaxError& err) {
                 cerr << err.what() << endl;
@@ -93,7 +105,7 @@ vector<V> mapToVector (map<K,V>& m) {
     return res;
 }
 
-vector<Token*> ExprLexer::tokenize(const string& expr) {
+vector<AbstractToken*> ExprLexer::tokenize(const string& expr) {
     string exprCopy(expr);
    // map<unsigned int, Token*> tokenMap;
 
@@ -110,12 +122,13 @@ vector<Token*> ExprLexer::tokenize(const string& expr) {
 //        }
 //    }
 
-    vector<Token*> tokenArray;
+    vector<AbstractToken*> tokenArray;
 
     while(exprCopy != "") {
         for(auto& [regex, action] : patterns) {
             smatch match;
-            if(regex_search(exprCopy, match, regex, regex_constants::match_continuous)) {
+            if(regex_search(exprCopy, match, regex,
+                            regex_constants::match_continuous)) {
                 auto res = action(match.str());
                 if(res != nullptr) {
                     tokenArray.push_back(res);

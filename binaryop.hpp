@@ -1,11 +1,11 @@
 #ifndef BINARYOP_H
 #define BINARYOP_H
 
-#include "token.hpp"
+#include "evaluabletoken.hpp"
 
 using BinaryOperation = std::function<double(const double&, const double&)>;
 
-class BinaryOp : public Token {
+class BinaryOp : public EvaluableToken {
     public:
 
         inline BinaryOp(const char symbol) : _symbol(symbol) {};
@@ -14,7 +14,9 @@ class BinaryOp : public Token {
 
         inline bool isOperator() const override { return true; };
 
-        void print(std::ostream &out) const override final {
+        inline bool isValue() const override { return false; };
+
+        inline void print(std::ostream &out) const override final {
             out << "BinaryOp(" << _symbol << ")";
         }
 

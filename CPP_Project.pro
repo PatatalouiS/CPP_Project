@@ -23,18 +23,23 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.14
 
 # Input
 HEADERS += \
+    abstracttoken.hpp \
+    basictoken.hpp \
     binaryop.hpp \
+    evaluabletoken.hpp \
     expr.hpp \
     exprlexer.hpp \
     exprparser.hpp \
     syntaxerror.hpp \
-    token.hpp \
     typealiases.hpp \
+    unaryop.hpp \
     value.hpp
 SOURCES += expr.cpp main.cpp \
+    abstracttoken.cpp \
+    basictoken.cpp \
     binaryop.cpp \
     exprlexer.cpp \
     exprparser.cpp \
     syntaxerror.cpp \
-    token.cpp \
+    unaryop.cpp \
     value.cpp

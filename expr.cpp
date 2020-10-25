@@ -9,26 +9,12 @@
 
 #include "exprlexer.hpp"
 #include "expr.hpp"
-#include "token.hpp"
+#include "evaluabletoken.hpp"
 #include "exprparser.hpp"
 #include <stack>
 #include "value.hpp"
 
 using namespace std;
-
-namespace {
-
-template<typename T>
-void deleteVector(vector<T*>& v) {
-
-    for(auto& val : v) {
-        delete val;
-    }
-    v.clear();
-}
-
-
-}
 
 Expr::Expr(const std::string& str) :
     _exprValue(str),
@@ -36,7 +22,7 @@ Expr::Expr(const std::string& str) :
 {}
 
 double Expr::eval() const {
-    stack<Token*> stack;
+    stack<EvaluableToken*> stack;
     vector<Value> tempResults;
 
        for(auto& token : _polishedTokens) {

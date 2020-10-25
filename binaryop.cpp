@@ -12,10 +12,10 @@ constexpr char MUL = '*';
 namespace {
 
 const FunctorsMapper mapper {
-        { ADD, [](const double& a, const double& b) { return a + b; }},
-        { MIN, [](const double& a, const  double& b) { return a - b; }},
-        { MUL, [](const double& a, const double& b) { return a * b; }},
-        { DIV, [](const double& a, const double& b) { return a / b; }},
+        { ADD, [](const double& a, const double& b) { return a + b;  }},
+        { MIN, [](const double& a, const double& b) { return a - b;  }},
+        { MUL, [](const double& a, const double& b) { return a * b;  }},
+        { DIV, [](const double& a, const double& b) { return a / b;  }},
 };
 
 }

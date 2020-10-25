@@ -2,7 +2,7 @@
 #define EXPR_H
 
 #include <string>
-#include "token.hpp"
+#include "evaluabletoken.hpp"
 
 class Expr {
 
@@ -10,7 +10,7 @@ class Expr {
 
         std::string _exprValue;
 
-        std::vector<Token*> _polishedTokens;
+        std::vector<EvaluableToken*> _polishedTokens;
 
     public:
 

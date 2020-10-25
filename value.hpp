@@ -1,10 +1,10 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-#include "token.hpp"
+#include "evaluabletoken.hpp"
 #include <string>
 
-class Value : public Token {
+class Value : public EvaluableToken {
 
     public:
 
@@ -12,11 +12,13 @@ class Value : public Token {
 
         inline Value(const double& value) : _value(value) {};
 
-        inline double eval(const double& a = 0, const double& b = 0) const override final {
-            (void) a; (void) b; return _value;
+        inline double eval(const double&, const double&) const override final {
+            return _value;
         };
 
         inline bool isOperator() const override final { return false; };
+
+        inline bool isValue() const override final { return true; };
 
         inline void print(std::ostream &out) const override final {
             out << "Value(" << _value << ")";
