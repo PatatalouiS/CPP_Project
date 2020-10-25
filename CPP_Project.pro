@@ -7,6 +7,7 @@ CONFIG += c++17
 CONFIG -= app_bundle
 CONFIG -= qt
 OBJECTS_DIR= obj/
+QMAKE_MAKEFILE = MakefileQt
 
 # The following define makes your compiler warn you if you use any
 # feature of Qt which has been marked as deprecated (the exact warnings
