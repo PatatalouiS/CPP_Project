@@ -3,3 +3,4 @@
 obj/
 *.pro.*
 .qmake.*
+CPP_Project
