@@ -7,7 +7,6 @@ CONFIG += c++17
 CONFIG -= app_bundle
 CONFIG -= qt
 OBJECTS_DIR= obj/
-QMAKE_MAKEFILE = MakefileQt
 
 # The following define makes your compiler warn you if you use any
 # feature of Qt which has been marked as deprecated (the exact warnings
@@ -27,20 +26,22 @@ HEADERS += \
     abstracttoken.hpp \
     basictoken.hpp \
     binaryop.hpp \
+    constants.hpp \
     evaluabletoken.hpp \
     expr.hpp \
     exprlexer.hpp \
     exprparser.hpp \
+    operator.hpp \
     syntaxerror.hpp \
     typealiases.hpp \
     unaryop.hpp \
+    utils.hpp \
     value.hpp
 SOURCES += expr.cpp main.cpp \
-    abstracttoken.cpp \
-    basictoken.cpp \
     binaryop.cpp \
     exprlexer.cpp \
     exprparser.cpp \
+    operator.cpp \
     syntaxerror.cpp \
     unaryop.cpp \
-    value.cpp
+    utils.cpp

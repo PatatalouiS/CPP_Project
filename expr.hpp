@@ -2,6 +2,7 @@
 #define EXPR_H
 
 #include <string>
+#include <vector>
 #include "evaluabletoken.hpp"
 
 class Expr {

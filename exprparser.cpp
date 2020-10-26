@@ -2,6 +2,7 @@
 #include "binaryop.hpp"
 #include "typealiases.hpp"
 #include "basictoken.hpp"
+#include "constants.hpp"
 
 #include <stack>
 
@@ -14,9 +15,9 @@ EvaluableToken* toEvaluableToken(AbstractToken* token) {
 void parseBasicToken(BasicToken* uToken,
                        stack<AbstractToken*>& stack,
                        vector<EvaluableToken*>& out ) {
-    auto uValue = uToken->get();
+    auto uValue = uToken->str();
 
-    if(uValue == U_Token::LPAR) {
+    if(uValue == BasicCharacters::LPAR) {
         stack.push(uToken);
     }
     else {
@@ -28,12 +29,12 @@ void parseBasicToken(BasicToken* uToken,
     }
 }
 
-void parseBinaryOp(BinaryOp* token,
+void parseOperator(Operator* token,
                         stack<AbstractToken*>& stack,
                         vector<EvaluableToken*>& out) {
     while(!stack.empty() &&
           stack.top()->isOperator() &&
-        (*static_cast<BinaryOp*>(stack.top()) >= *token)){
+        (*static_cast<Operator*>(stack.top()) >= *token)){
 
         out.push_back(toEvaluableToken(stack.top()));
         stack.pop();
@@ -51,7 +52,7 @@ vector<EvaluableToken*> ExprParser::parse(const vector<AbstractToken*>& tokens) 
                 out.push_back(toEvaluableToken(token));
             }
             else if(token->isOperator()) {
-                parseBinaryOp(static_cast<BinaryOp*>(token), stack, out);
+                parseOperator(static_cast<Operator*>(token), stack, out);
             }
             else parseBasicToken(static_cast<BasicToken*>(token), stack, out);
         }

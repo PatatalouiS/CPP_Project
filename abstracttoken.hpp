@@ -12,6 +12,8 @@ class AbstractToken {
 
         virtual bool isValue() const = 0;
 
+        virtual std::string str() const = 0;
+
         inline friend std::ostream& operator<< (std::ostream& out, const AbstractToken& t) {
             t.print(std::cout);
             return out;

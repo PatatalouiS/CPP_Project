@@ -3,14 +3,13 @@
 
 #include <vector>
 
-#include "evaluabletoken.hpp"
+#include "abstracttoken.hpp"
 
 class ExprLexer {
 
     public:
 
         static std::vector<AbstractToken*> tokenize(const std::string& str);
-
 };
 
 #endif // EXPRLEXER_H

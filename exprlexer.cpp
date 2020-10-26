@@ -1,139 +1,100 @@
+
+#include <map>
+#include <regex>
+
 #include "exprlexer.hpp"
 #include "value.hpp"
 #include "binaryop.hpp"
-#include <regex>
-#include <unordered_map>
-#include "syntaxerror.hpp"
 #include "basictoken.hpp"
-#include <map>
+#include "syntaxerror.hpp"
+#include "constants.hpp"
+#include "unaryop.hpp"
 
 using namespace std;
+using namespace regex_constants;
 using LexerAction = function<AbstractToken*(const string&)>;
+
+const AbstractToken* previousToken = nullptr;
 
 struct LexerRule {
     regex regex;
     LexerAction action;
 };
 
-//namespace {
+namespace LexerActions {
 
-//const LexerAction createValue = [
-//};
-
-//const LexerAction createBinaryOperator = [](const string& s) {
-//    return new BinaryOp(s.front());
-//};
-
-//const LexerAction SCAN_LEXBUF = [](const string&) {
-//    return nullptr;
-//};
-
-//const LexerAction syntaxError = [](const string& s) {
-//    try {
-//        throw SyntaxError("Syntax Error : Unknow character \"" + s + "\" in exprlexer.cpp:28");
-//    }
-//    catch(SyntaxError& err) {
-//        cerr << err.what() << endl;
-//        exit(EXIT_FAILURE);
-//    }
-//    return nullptr;
-//};
-
-//const unordered_map<string, LexerAction> patterns {
-//    { "(+|-)?[0-9]+(\\.[0-9]+)?"  , createValue          },
-//    { "(\\+|-|/|\\*)"             , createBinaryOperator },
-//    { "\\s*"                      , SCAN_LEXBUF          },
-//    { "."                         , syntaxError          }
-//};
-
-const std::vector<LexerRule> patterns {
-    {
-        regex("[0-9]+(\\.[0-9]+)?"),
-        [](const string& s) {
-            return new Value(stod(s));
-        }
-    },
-    {
-        regex("(\\+|-|/|\\*)"),
-        [](const string& s) {
-            return new BinaryOp(s.front());
-        }
-    },
-    {
-        regex("\\("),
-        [](const string&) {
-            return new LPAR();
-        }
-    },
-    {
-        regex("\\)"),
-        [](const string&) {
-            return new RPAR();
-        }
-    },
-    {
-        regex("\\s+"),
-        [](const string&) {
-            return nullptr;
-        }
-    },
-    {
-        regex("."),
-        [](const string& s) {
-            try {
-                throw SyntaxError("Syntax Error : Unknow character \""
-                                  + s + "\" in exprlexer.cpp:28");
-            }
-            catch(SyntaxError& err) {
-                cerr << err.what() << endl;
-                exit(EXIT_FAILURE);
-            }
-            return nullptr;
-        }
-    }
+const LexerAction createValue = [](const string& s) {
+    return new Value(stod(s));
 };
 
+const LexerAction createOperator = [](const string& s) {
+    AbstractToken* op;
+    if((previousToken == nullptr)
+       || previousToken->isOperator()
+       || (previousToken->str() == BasicCharacters::LPAR)) {
+        op = new UnaryOp(s.front());
+    }
+    else {
+        op = new BinaryOp(s.front());
+    }
 
+    return op;
+};
 
-template <typename K, typename V>
-vector<V> mapToVector (map<K,V>& m) {
-    vector<V> res;
-    transform(m.begin(), m.end(), back_inserter(res), [] (auto& pair) {
-        return pair.second;
-    });
+const LexerAction SCAN_LEXBUF = [](const string&) {
+    return nullptr;
+};
 
-    return res;
+const LexerAction createLPAR = [](const string&) {
+    return new LPAR();
+};
+
+const LexerAction createRPAR = [](const string&) {
+    return new RPAR();
+};
+
+const LexerAction SYNTAX_ERROR = [](const string& s) {
+    try {
+        throw SyntaxError("Syntax Error : Unknow character \""
+                          + s + "\" in exprlexer.cpp:28");
+    }
+    catch(SyntaxError& err) {
+        cerr << err.what() << endl;
+        exit(EXIT_FAILURE);
+    }
+    return nullptr;
+};
+
 }
 
+using namespace LexerActions;
+
+const vector<LexerRule> patterns {
+    { regex("[0-9]+(\\.[0-9]+)?") , createValue          },
+    { regex("(\\+|-|/|\\*)")      , createOperator       },
+    { regex("\\(")                , createLPAR           },
+    { regex("\\)")                , createRPAR           },
+    { regex("\\s+")               , SCAN_LEXBUF          },
+    { regex(".")                  , SYNTAX_ERROR         }
+};
+
 vector<AbstractToken*> ExprLexer::tokenize(const string& expr) {
-    string exprCopy(expr);
-   // map<unsigned int, Token*> tokenMap;
-
-//    for(auto& [regexStr, action] : patterns) {
-//        regex regex(regexStr);
-    //        auto begin = sregex_iterator(expr.begin(), expr.end(), regex);
-    //        auto end = sregex_iterator();
-
-//        for (auto it = begin; it != end; ++it ) {
-//            auto res = action(it->str());
-//            if(res != nullptr) {
-//                tokenMap[ it->position() ] = action(it->str());
-//            }
-//        }
-//    }
-
+    previousToken = nullptr;
     vector<AbstractToken*> tokenArray;
+    auto it = expr.cbegin();
 
-    while(exprCopy != "") {
-        for(auto& [regex, action] : patterns) {
+    while(it != expr.cend()) {
+        for(const auto& [regex, action] : patterns) {
             smatch match;
-            if(regex_search(exprCopy, match, regex,
-                            regex_constants::match_continuous)) {
+            if(regex_search(it, expr.cend(), match, regex, match_continuous)) {
                 auto res = action(match.str());
+
                 if(res != nullptr) {
                     tokenArray.push_back(res);
+                    previousToken = res;
                 }
-                exprCopy = exprCopy.substr(match.str().length());
+
+                it += match.str().length();
                 break;
             }
         }

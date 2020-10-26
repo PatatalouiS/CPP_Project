@@ -7,8 +7,7 @@
 class Value : public EvaluableToken {
 
     public:
-
-        Value() = delete;
+        Value() = default;
 
         inline Value(const double& value) : _value(value) {};
 
@@ -19,6 +18,8 @@ class Value : public EvaluableToken {
         inline bool isOperator() const override final { return false; };
 
         inline bool isValue() const override final { return true; };
+
+        inline std::string str() const override final { return std::to_string(_value); }
 
         inline void print(std::ostream &out) const override final {
             out << "Value(" << _value << ")";

@@ -1,7 +1,6 @@
 #ifndef SYNTAXERROR_HPP
 #define SYNTAXERROR_HPP
 
-//#include <exception>
 #include <string>
 
 class SyntaxError {

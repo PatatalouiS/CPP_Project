@@ -2,31 +2,25 @@
 #define BASICTOKEN_HPP
 
 #include "abstracttoken.hpp"
-
-enum class U_Token {
-    LPAR,
-    RPAR
-};
+#include "constants.hpp"
 
 class BasicToken : public AbstractToken {
 
     public:
 
-        inline BasicToken(const U_Token token) : _token(token) {}
+        inline BasicToken(const std::string& token) : _token(token) {}
 
         virtual inline void print(std::ostream &out) const override = 0;
 
         inline bool isOperator() const override final { return false; }
 
-        inline bool isValue() const override final { return  false; }
+        inline bool isValue() const override final { return false; }
 
-        U_Token get() const {
-            return _token;
-        }
+        inline std::string str() const override final { return _token; }
 
     protected:
 
-        U_Token _token;
+        std::string _token;
 };
 
 #endif // UNSEMANTICTOKEN_HPP
@@ -36,7 +30,7 @@ class BasicToken : public AbstractToken {
 
 class LPAR : public BasicToken {
     public :
-        LPAR() : BasicToken(U_Token::LPAR) {}
+        LPAR() : BasicToken(BasicCharacters::LPAR) {}
         inline void print(std::ostream& out) const override final {
             out << "LPAR";
         }
@@ -49,7 +43,7 @@ class LPAR : public BasicToken {
 
 class RPAR : public BasicToken {
     public :
-        RPAR() : BasicToken(U_Token::RPAR) {}
+        RPAR() : BasicToken(BasicCharacters::RPAR) {}
         inline void print(std::ostream& out) const override final {
             out << "RPAR";
         }

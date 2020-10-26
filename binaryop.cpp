@@ -1,13 +1,13 @@
-#include "binaryop.hpp"
 #include <unordered_map>
 
-using namespace std;
-using FunctorsMapper = unordered_map<char, BinaryOperation>;
+#include "binaryop.hpp"
+#include "constants.hpp"
 
-constexpr char ADD = '+';
-constexpr char MIN = '-';
-constexpr char DIV = '/';
-constexpr char MUL = '*';
+using namespace std;
+using BinaryOperation = std::function<double(const double&, const double&)>;
+using FunctorsMapper = unordered_map<char, BinaryOperation>;
+using namespace Operators;
+
 
 namespace {
 
@@ -24,8 +24,6 @@ double BinaryOp::eval(const double& a, const double& b) const {
     return mapper.at(_symbol)(a, b);
 }
 
-bool BinaryOp::operator>=(const BinaryOp& other) const {
-        return !(((_symbol == '-') || (_symbol == '+')) &&
-                   ((other._symbol == '/') || (other._symbol == '*')));
-
+unsigned int BinaryOp::precedence() const {
+    return ((_symbol == ADD) || (_symbol == MIN)) ? 0 : 1;
 }
