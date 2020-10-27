@@ -5,3 +5,4 @@ obj/
 .qmake.*
 CPP_Project
 MakefileQt
+*.test

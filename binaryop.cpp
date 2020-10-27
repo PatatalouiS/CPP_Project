@@ -16,6 +16,7 @@ const FunctorsMapper mapper {
         { MIN, [](const double& a, const double& b) { return a - b;  }},
         { MUL, [](const double& a, const double& b) { return a * b;  }},
         { DIV, [](const double& a, const double& b) { return a / b;  }},
+        { SET, [](const double& a, const double&  ) { return a;      }}
 };
 
 }
@@ -25,5 +26,12 @@ double BinaryOp::eval(const double& a, const double& b) const {
 }
 
 unsigned int BinaryOp::precedence() const {
-    return ((_symbol == ADD) || (_symbol == MIN)) ? 0 : 1;
+    switch(_symbol) {
+        case '+' : return 2; break;
+        case '-' : return 2; break;
+        case '*' : return 3; break;
+        case '/' : return 3; break;
+        case '=' : return 1; break;
+        default :  return -1;
+    }
 }

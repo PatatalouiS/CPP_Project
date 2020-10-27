@@ -22,5 +22,5 @@ double UnaryOp::eval(const double &op, const double &) const {
 }
 
 unsigned int UnaryOp::precedence() const {
-    return 3;
+    return 4;
 }

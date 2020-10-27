@@ -29,8 +29,11 @@ HEADERS += \
     constants.hpp \
     evaluabletoken.hpp \
     expr.hpp \
+    exprapp.hpp \
     exprlexer.hpp \
     exprparser.hpp \
+    id.hpp \
+    memory.hpp \
     operator.hpp \
     syntaxerror.hpp \
     typealiases.hpp \
@@ -39,8 +42,10 @@ HEADERS += \
     value.hpp
 SOURCES += expr.cpp main.cpp \
     binaryop.cpp \
+    exprapp.cpp \
     exprlexer.cpp \
     exprparser.cpp \
+    id.cpp \
     operator.cpp \
     syntaxerror.cpp \
     unaryop.cpp \

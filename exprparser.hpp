@@ -4,13 +4,14 @@
 #include "evaluabletoken.hpp"
 #include <vector>
 #include <memory>
+#include "typealiases.hpp"
 
 class ExprParser {
 
      public:
 
-        static std::vector<EvaluableToken*> parse(const std::vector<AbstractToken*>& tokens);
-
+        static std::vector<EvaluableToken_ptr> parse
+            (const std::vector<AbstractToken_ptr>& tokens);
 
 };
 

@@ -3,6 +3,10 @@
 
 #include <vector>
 #include <iostream>
+#include <unistd.h>
+#include <fcntl.h>
+
+
 
 namespace PrintUtils {
 
@@ -13,6 +17,16 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T*>& v) {
     }
     return out;
 }
+
+}
+
+namespace InputUtils {
+
+void read_nonblock_mode();
+
+void read_block_mode();
+
+bool pipe_is_used();
 
 }
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "evaluabletoken.hpp"
+#include "typealiases.hpp"
 
 class Expr {
 
@@ -11,7 +12,7 @@ class Expr {
 
         std::string _exprValue;
 
-        std::vector<EvaluableToken*> _polishedTokens;
+        std::vector<EvaluableToken_ptr> _polishedTokens;
 
     public:
 

@@ -4,12 +4,13 @@
 #include <vector>
 
 #include "abstracttoken.hpp"
+#include "typealiases.hpp"
 
 class ExprLexer {
 
     public:
 
-        static std::vector<AbstractToken*> tokenize(const std::string& str);
+        static std::vector<AbstractToken_ptr> tokenize(const std::string& str);
 };
 
 #endif // EXPRLEXER_H

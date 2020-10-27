@@ -13,37 +13,15 @@
 #include "value.hpp"
 #include "operator.hpp"
 #include "utils.hpp"
+#include "constants.hpp"
+#include "id.hpp"
+#include "exprapp.hpp"
 
 using namespace std;
 using namespace PrintUtils;
 
-void printStack(stack<EvaluableToken*> s) {
-    cout << "PRINT_STACK" << endl;
-    while(!s.empty()) {
-         cout << *s.top() << " | ";
-         s.pop();
-    }
-    cout << endl;
-}
-
-void printVec(const vector<AbstractToken*>& s) {
-    cout << endl << "PRINT_VEC" << endl;
-    for(auto& i : s) {
-        cout << *i << " | ";
-    }
-    cout << endl << endl;
-}
-
-void printVecE(const vector<EvaluableToken*>& s) {
-    cout << endl << "PRINT_VEC" << endl;
-    for(auto& i : s) {
-        cout << *i << " | ";
-    }
-    cout << endl << endl;
-}
-
 template<typename T>
-T* topAndPop(stack<T*>& stack) {
+T topAndPop(stack<T>& stack) {
     auto ptr = stack.top();
     stack.pop();
     return ptr;
@@ -51,15 +29,13 @@ T* topAndPop(stack<T*>& stack) {
 
 Expr::Expr(const std::string& str) {
     auto tokens = ExprLexer::tokenize(str);
-    printVec(tokens);
     auto parsedTokens = ExprParser::parse(tokens);
-    printVecE(parsedTokens);
     _polishedTokens = parsedTokens;
 }
 
 double Expr::eval() const {
-    stack<EvaluableToken*> stack;
-    vector<unique_ptr<Value>> tempResults;
+    stack<EvaluableToken_ptr> stack;
+    vector<Value_ptr> tempResults;
 
        for(auto& token : _polishedTokens) {
            //cout << "CurrentToken :  " << *token << endl;;
@@ -67,23 +43,37 @@ double Expr::eval() const {
                stack.push(token);
            }
            else {
-               auto currentOperator = static_cast<Operator*>(token);
+               auto currentOperator = static_pointer_cast<Operator>(token);
                auto op1 = topAndPop(stack)->eval();
 
                if(currentOperator->isUnary()) {
                    tempResults.emplace_back(make_unique<Value>(token->eval(op1)));
-                   //cout << "ONE_OP :  " << op << endl;
+                   cout << "ONE_OP :  " << op1 << endl;
                }
                else {
-                   auto op2 = topAndPop(stack)->eval();
-                   //cout << "TWO_OP_2 :  " << op2 << endl;
-                   tempResults.emplace_back(make_unique<Value>(token->eval(op2, op1)));
+                   if(currentOperator->str()[0] == Operators::SET) {
+                       auto op2 = static_pointer_cast<ID>(topAndPop(stack));
+                       ExprApp::putVariable({ op2->str(), op1 });
+                       tempResults.emplace_back(make_unique<Value>(op1));
+                   }
+                   else {
+                       auto op2 = topAndPop(stack)->eval();
+                       cout << "TWO_OP_2 :  " << op2 << endl;
+                       tempResults.emplace_back(make_unique<Value>(token->eval(op2, op1)));
+                   }
                }
 
-               stack.push(tempResults.back().get());
+               stack.push(tempResults.back());
            }
            //cout << "STACK_SIZE : " << stack.size() << endl << endl;
        }
+
+       for(auto& [key, value] : ExprApp::memory ) {
+           cout << "Key : " << key << "    Value : " << value << endl;
+       }
+
+       cout << endl;
+
        return stack.top()->eval();
 }
 

@@ -9,12 +9,14 @@
 #include "syntaxerror.hpp"
 #include "constants.hpp"
 #include "unaryop.hpp"
+#include "typealiases.hpp"
+#include "id.hpp"
 
 using namespace std;
 using namespace regex_constants;
-using LexerAction = function<AbstractToken*(const string&)>;
+using LexerAction = function<AbstractToken_ptr(const string&)>;
 
-const AbstractToken* previousToken = nullptr;
+static AbstractToken_ptr previousToken = nullptr;
 
 struct LexerRule {
     regex regex;
@@ -24,21 +26,21 @@ struct LexerRule {
 namespace LexerActions {
 
 const LexerAction createValue = [](const string& s) {
-    return new Value(stod(s));
+    return make_shared<Value>(stod(s));
 };
 
 const LexerAction createOperator = [](const string& s) {
-    AbstractToken* op;
+    shared_ptr<AbstractToken> op;
     if((previousToken == nullptr)
        || previousToken->isOperator()
        || (previousToken->str() == BasicCharacters::LPAR)) {
-        op = new UnaryOp(s.front());
+        op = make_shared<UnaryOp>(s.front());
     }
     else {
-        op = new BinaryOp(s.front());
+        op = make_shared<BinaryOp>(s.front());
     }
 
-    return op;
+    return  op;
 };
 
 const LexerAction SCAN_LEXBUF = [](const string&) {
@@ -46,11 +48,15 @@ const LexerAction SCAN_LEXBUF = [](const string&) {
 };
 
 const LexerAction createLPAR = [](const string&) {
-    return new LPAR();
+    return make_shared<LPAR>();
 };
 
 const LexerAction createRPAR = [](const string&) {
-    return new RPAR();
+    return make_shared<RPAR>();
+};
+
+const LexerAction createID = [](const string& s) {
+    return make_shared<ID>(s);
 };
 
 const LexerAction SYNTAX_ERROR = [](const string& s) {
@@ -70,17 +76,18 @@ const LexerAction SYNTAX_ERROR = [](const string& s) {
 using namespace LexerActions;
 
 const vector<LexerRule> patterns {
-    { regex("[0-9]+(\\.[0-9]+)?") , createValue          },
-    { regex("(\\+|-|/|\\*)")      , createOperator       },
-    { regex("\\(")                , createLPAR           },
-    { regex("\\)")                , createRPAR           },
-    { regex("\\s+")               , SCAN_LEXBUF          },
-    { regex(".")                  , SYNTAX_ERROR         }
+    { regex("[0-9]+(\\.[0-9]+)?")           , createValue          },
+    { regex("([a-zA-Z]|_)([a-zA-Z0-9]|_)*") , createID             },
+    { regex("(\\+|-|/|=|\\*)")                , createOperator       },
+    { regex("\\(")                          , createLPAR           },
+    { regex("\\)")                          , createRPAR           },
+    { regex("\\s+")                         , SCAN_LEXBUF          },
+    { regex(".")                            , SYNTAX_ERROR         }
 };
 
-vector<AbstractToken*> ExprLexer::tokenize(const string& expr) {
-    previousToken = nullptr;
-    vector<AbstractToken*> tokenArray;
+vector<AbstractToken_ptr> ExprLexer::tokenize(const string& expr)  {
+    previousToken.reset();
+    vector<AbstractToken_ptr> tokenArray;
     auto it = expr.cbegin();
 
     while(it != expr.cend()) {
