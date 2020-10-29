@@ -3,14 +3,9 @@
 #include <regex>
 
 #include "exprlexer.hpp"
-#include "value.hpp"
-#include "binaryop.hpp"
-#include "basictoken.hpp"
-#include "syntaxerror.hpp"
-#include "constants.hpp"
 #include "unaryop.hpp"
-#include "typealiases.hpp"
 #include "id.hpp"
+#include "lexererror.hpp"
 
 using namespace std;
 using namespace regex_constants;
@@ -25,8 +20,8 @@ struct LexerRule {
 
 namespace LexerActions {
 
-const LexerAction createValue = [](const string& s) {
-    return make_shared<Value>(stod(s));
+const LexerAction createConst = [](const string& s) {
+    return make_shared<Const>(stod(s));
 };
 
 const LexerAction createOperator = [](const string& s) {
@@ -59,12 +54,11 @@ const LexerAction createID = [](const string& s) {
     return make_shared<ID>(s);
 };
 
-const LexerAction SYNTAX_ERROR = [](const string& s) {
+const LexerAction LEXER_ERROR = [](const string& s) {
     try {
-        throw SyntaxError("Syntax Error : Unknow character \""
-                          + s + "\" in exprlexer.cpp:28");
+        throw LexerError("Lexer Error : Unknow character \""+ s + "\"");
     }
-    catch(SyntaxError& err) {
+    catch(LexerError& err) {
         cerr << err.what() << endl;
         exit(EXIT_FAILURE);
     }
@@ -76,13 +70,13 @@ const LexerAction SYNTAX_ERROR = [](const string& s) {
 using namespace LexerActions;
 
 const vector<LexerRule> patterns {
-    { regex("[0-9]+(\\.[0-9]+)?")           , createValue          },
+    { regex("[0-9]+(\\.[0-9]+)?")           , createConst          },
     { regex("([a-zA-Z]|_)([a-zA-Z0-9]|_)*") , createID             },
     { regex("(\\+|-|/|=|\\*)")              , createOperator       },
     { regex("\\(")                          , createLPAR           },
     { regex("\\)")                          , createRPAR           },
     { regex("\\s+")                         , SCAN_LEXBUF          },
-    { regex(".")                            , SYNTAX_ERROR         }
+    { regex(".")                            , LEXER_ERROR         }
 };
 
 vector<AbstractToken_ptr> ExprLexer::tokenize(const string& expr)  {
@@ -109,4 +103,3 @@ vector<AbstractToken_ptr> ExprLexer::tokenize(const string& expr)  {
 
     return tokenArray;
 }
-

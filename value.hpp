@@ -1,35 +1,25 @@
-#ifndef VALUE_H
-#define VALUE_H
+#ifndef VALUE_HPP
+#define VALUE_HPP
 
 #include "evaluabletoken.hpp"
-#include <string>
 
 class Value : public EvaluableToken {
 
     public:
-        Value() = delete;
 
-        inline Value(const double& value) : EvaluableToken(TokenType::CONST), _value(value) {};
+        virtual double eval (const double& opA = 0, const double& opB = 0) const override = 0;
 
-        inline double eval(const double&, const double&) const override final {
-            return _value;
-        };
+    virtual bool isOperator () const override final { return false; }
 
-        inline bool isOperator() const override final { return false; }
+    virtual bool isValue() const override final { return true; }
 
-        inline bool isValue() const override final { return true; }
+    virtual bool isID() const override = 0;
 
-        inline bool isID() const override final { return false; }
+    virtual void print(std::ostream& out) const override = 0;
 
-        inline std::string str() const override final { return std::to_string(_value); }
+    virtual std::string str() const override = 0;
 
-        inline void print(std::ostream &out) const override final {
-            out << "Value(" << _value << ")";
-        };
-
-    private:
-
-        double _value;
+    virtual ~Value() = default;
 };
 
-#endif // VALUE_H
+#endif // VALUE_HPP

@@ -1,10 +1,9 @@
-#include "exprparser.hpp"
-#include "binaryop.hpp"
+
 #include "typealiases.hpp"
-#include "basictoken.hpp"
-#include "constants.hpp"
+#include "exprparser.hpp"
 #include "exprapp.hpp"
 
+#include <vector>
 #include <stack>
 
 using namespace std;

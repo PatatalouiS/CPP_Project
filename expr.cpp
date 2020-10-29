@@ -1,21 +1,13 @@
 
-#include <vector>
-#include <algorithm>
-#include <iostream>
-#include <stack>
-#include <string>
-
-#include "exprlexer.hpp"
-#include "expr.hpp"
-#include "evaluabletoken.hpp"
-#include "exprparser.hpp"
-#include <stack>
-#include "value.hpp"
-#include "operator.hpp"
 #include "utils.hpp"
-#include "constants.hpp"
+#include "expr.hpp"
+#include "exprlexer.hpp"
+#include "exprparser.hpp"
 #include "id.hpp"
 #include "exprapp.hpp"
+
+#include <stack>
+
 
 using namespace std;
 using namespace PrintUtils;
@@ -35,7 +27,7 @@ Expr::Expr(const std::string& str) {
 
 double Expr::eval() const {
     stack<EvaluableToken_ptr> stack;
-    vector<Value_ptr> tempResults;
+    vector<Const_ptr> tempResults;
 
     //printVector(_polishedTokens);
 
@@ -49,32 +41,24 @@ double Expr::eval() const {
                auto op1 = topAndPop(stack)->eval();
 
                if(currentOperator->isUnary()) {
-                   tempResults.emplace_back(make_unique<Value>(token->eval(op1)));
+                   tempResults.emplace_back(make_unique<Const>(token->eval(op1)));
                    //cout << "ONE_OP :  " << op1 << endl;
                }
                else {
                    if(currentOperator->str()[0] == Operators::SET) {
                        auto op2 = static_pointer_cast<ID>(topAndPop(stack));
                        ExprApp::putVariable({ op2->str(), op1 });
-                       tempResults.emplace_back(make_unique<Value>(op1));
+                       tempResults.emplace_back(make_unique<Const>(op1));
                    }
                    else {
                        auto op2 = topAndPop(stack)->eval();
                        //cout << "TWO_OP_2 :  " << op2 << endl;
-                       tempResults.emplace_back(make_unique<Value>(token->eval(op2, op1)));
+                       tempResults.emplace_back(make_unique<Const>(token->eval(op2, op1)));
                    }
                }
-
                stack.push(tempResults.back());
            }
        }
-
-//       for(auto& [key, value] : ExprApp::memory ) {
-//           cout << "Key : " << key << "    Value : " << value << endl;
-//       }
-
-//       cout << endl;
-
        return stack.top()->eval();
 }
 

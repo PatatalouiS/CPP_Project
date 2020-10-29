@@ -2,13 +2,12 @@
 #define UNARYOP_HPP
 
 #include "operator.hpp"
-#include "constants.hpp"
 
 class UnaryOp : public Operator {
 
     public:
 
-        UnaryOp(const char symbol) : Operator(symbol, TokenType::UNARY_OP) {}
+        UnaryOp(const char symbol) : Operator(symbol) {}
 
         double eval(const double& op, const double&) const override final;
 

@@ -27,11 +27,11 @@ double BinaryOp::eval(const double& a, const double& b) const {
 
 unsigned int BinaryOp::precedence() const {
     switch(_symbol) {
-        case '+' : return 2; break;
-        case '-' : return 2; break;
-        case '*' : return 3; break;
-        case '/' : return 3; break;
-        case '=' : return 1; break;
+        case ADD : return 2; break;
+        case MIN : return 2; break;
+        case MUL : return 3; break;
+        case DIV : return 3; break;
+        case SET : return 1; break;
         default :  return -1;
     }
 }

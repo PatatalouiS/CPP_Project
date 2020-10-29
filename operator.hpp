@@ -2,15 +2,12 @@
 #define OPERATOR_HPP
 
 #include "evaluabletoken.hpp"
-#include "constants.hpp"
 
 class Operator : public EvaluableToken {
 
     public:
 
-        inline Operator(const char symbol, TokenType type) :
-            EvaluableToken(type),
-            _symbol(symbol) {};
+        inline Operator(const char symbol) :_symbol(symbol) {};
 
         inline std::string str() const override final { return std::string(1, _symbol); }
 

@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include "evaluabletoken.hpp"
 #include "typealiases.hpp"
 
 class Expr {

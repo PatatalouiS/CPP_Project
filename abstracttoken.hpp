@@ -2,14 +2,10 @@
 #define ABSTRACTTOKEN_HPP
 
 #include <iostream>
-#include "constants.hpp"
 
 class AbstractToken {
+
     public:
-
-        AbstractToken(TokenType type) : _type(type) {};
-
-        virtual void print(std::ostream& out) const = 0;
 
         virtual bool isOperator () const = 0;
 
@@ -19,7 +15,7 @@ class AbstractToken {
 
         virtual std::string str() const = 0;
 
-        inline TokenType type() { return _type; }
+        virtual void print(std::ostream& out) const = 0;
 
         inline friend std::ostream& operator<< (std::ostream& out, const AbstractToken& t) {
             t.print(std::cout);
@@ -27,10 +23,6 @@ class AbstractToken {
         }
 
         virtual ~AbstractToken() = default;
-
-        protected:
-
-        TokenType _type;
 };
 
 #endif // ABSTRACTTOKEN_HPP

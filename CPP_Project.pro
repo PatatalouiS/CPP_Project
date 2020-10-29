@@ -35,11 +35,12 @@ HEADERS += \
     id.hpp \
     memory.hpp \
     operator.hpp \
-    syntaxerror.hpp \
     typealiases.hpp \
     unaryop.hpp \
     utils.hpp \
-    value.hpp
+    value.hpp \
+	const.hpp \
+	lexererror.hpp
 SOURCES += expr.cpp main.cpp \
     binaryop.cpp \
     exprapp.cpp \
@@ -47,6 +48,6 @@ SOURCES += expr.cpp main.cpp \
     exprparser.cpp \
     id.cpp \
     operator.cpp \
-    syntaxerror.cpp \
     unaryop.cpp \
-    utils.cpp
+    utils.cpp \
+	lexererror.cpp

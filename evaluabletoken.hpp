@@ -13,8 +13,6 @@ class EvaluableToken : public AbstractToken {
 
     public :
 
-        using AbstractToken::AbstractToken;
-
         virtual double eval (const double& opA = 0, const double& opB = 0) const = 0;
 
         virtual bool isOperator () const override = 0;

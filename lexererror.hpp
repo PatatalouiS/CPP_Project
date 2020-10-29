@@ -3,11 +3,11 @@
 
 #include <string>
 
-class SyntaxError {
+class LexerError {
 
     public:
 
-        SyntaxError(const std::string& str);
+        LexerError(const std::string& str);
 
         virtual const std::string& what() const;
 
