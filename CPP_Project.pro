@@ -35,6 +35,7 @@ HEADERS += \
     id.hpp \
     memory.hpp \
     operator.hpp \
+    tree.hpp \
     typealiases.hpp \
     unaryop.hpp \
     utils.hpp \

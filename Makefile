@@ -261,6 +261,7 @@ DIST          = /Users/maximeolivie/Qt/5.12.8/clang_64/mkspecs/features/spec_pre
 		id.hpp \
 		memory.hpp \
 		operator.hpp \
+		tree.hpp \
 		typealiases.hpp \
 		unaryop.hpp \
 		utils.hpp \
@@ -699,37 +700,38 @@ compiler_clean:
 
 ####### Compile
 
-obj/expr.o: expr.cpp exprlexer.hpp \
-		abstracttoken.hpp \
-		constants.hpp \
+obj/expr.o: expr.cpp utils.hpp \
+		expr.hpp \
 		typealiases.hpp \
 		value.hpp \
 		evaluabletoken.hpp \
+		abstracttoken.hpp \
 		binaryop.hpp \
 		operator.hpp \
 		basictoken.hpp \
+		constants.hpp \
 		const.hpp \
-		expr.hpp \
+		exprlexer.hpp \
 		exprparser.hpp \
-		utils.hpp \
 		id.hpp \
 		exprapp.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/expr.o expr.cpp
 
 obj/main.o: main.cpp expr.hpp \
-		evaluabletoken.hpp \
-		abstracttoken.hpp \
-		constants.hpp \
 		typealiases.hpp \
 		value.hpp \
+		evaluabletoken.hpp \
+		abstracttoken.hpp \
 		binaryop.hpp \
 		operator.hpp \
 		basictoken.hpp \
+		constants.hpp \
 		const.hpp \
 		exprapp.hpp \
 		id.hpp \
 		exprlexer.hpp \
-		exprparser.hpp
+		exprparser.hpp \
+		tree.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/main.o main.cpp
 
 obj/binaryop.o: binaryop.cpp binaryop.hpp \
@@ -741,13 +743,13 @@ obj/binaryop.o: binaryop.cpp binaryop.hpp \
 
 obj/exprapp.o: exprapp.cpp exprapp.hpp \
 		id.hpp \
+		value.hpp \
 		evaluabletoken.hpp \
 		abstracttoken.hpp \
-		constants.hpp \
 		utils.hpp \
+		constants.hpp \
 		expr.hpp \
 		typealiases.hpp \
-		value.hpp \
 		binaryop.hpp \
 		operator.hpp \
 		basictoken.hpp \
@@ -756,43 +758,42 @@ obj/exprapp.o: exprapp.cpp exprapp.hpp \
 
 obj/exprlexer.o: exprlexer.cpp exprlexer.hpp \
 		abstracttoken.hpp \
-		constants.hpp \
 		typealiases.hpp \
 		value.hpp \
 		evaluabletoken.hpp \
 		binaryop.hpp \
 		operator.hpp \
 		basictoken.hpp \
+		constants.hpp \
 		const.hpp \
-		lexererror.hpp \
 		unaryop.hpp \
-		id.hpp
+		id.hpp \
+		lexererror.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/exprlexer.o exprlexer.cpp
 
-obj/exprparser.o: exprparser.cpp exprparser.hpp \
+obj/exprparser.o: exprparser.cpp typealiases.hpp \
+		value.hpp \
 		evaluabletoken.hpp \
 		abstracttoken.hpp \
-		constants.hpp \
-		typealiases.hpp \
-		value.hpp \
 		binaryop.hpp \
 		operator.hpp \
 		basictoken.hpp \
+		constants.hpp \
 		const.hpp \
+		exprparser.hpp \
 		exprapp.hpp \
 		id.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/exprparser.o exprparser.cpp
 
 obj/id.o: id.cpp id.hpp \
+		value.hpp \
 		evaluabletoken.hpp \
-		abstracttoken.hpp \
-		constants.hpp
+		abstracttoken.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/id.o id.cpp
 
 obj/operator.o: operator.cpp operator.hpp \
 		evaluabletoken.hpp \
-		abstracttoken.hpp \
-		constants.hpp
+		abstracttoken.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/operator.o operator.cpp
 
 obj/unaryop.o: unaryop.cpp unaryop.hpp \
@@ -805,7 +806,7 @@ obj/unaryop.o: unaryop.cpp unaryop.hpp \
 obj/utils.o: utils.cpp utils.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/utils.o utils.cpp
 
-obj/lexererror.o: lexererror.cpp 
+obj/lexererror.o: lexererror.cpp lexererror.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/lexererror.o lexererror.cpp
 
 ####### Install
