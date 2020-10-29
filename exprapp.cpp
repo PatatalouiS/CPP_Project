@@ -4,6 +4,8 @@
 #include "constants.hpp"
 #include "expr.hpp"
 
+#include <exception>
+
 using namespace std;
 using namespace BasicCharacters;
 
@@ -38,13 +40,21 @@ void ExprApp::run() {
             break;
         }
 
-        if(!line.empty() && (line.back() != SEMI)) {
-            Expr expr(line);
-            cout << expr.eval() << endl;
-        }
-        else {
+        if(!line.empty()) {
+            string stringToEval = line;
 
+            if(line.back() == SEMI) {
+                stringToEval.pop_back();
+            }
+
+            Expr expr(stringToEval);
+            auto result = expr.eval();
+
+            if(line.back() != SEMI) {
+               cout << result << endl;
+            }
         }
+
         line.clear();
     }
 
@@ -52,5 +62,29 @@ void ExprApp::run() {
 }
 
 void ExprApp::putVariable(const std::pair<std::string, double> &var) {
-    memory.insert(var);
+    auto find = memory.find(var.first);
+
+    if(find != memory.end()) {
+        find->second = var.second;
+    }
+    else {
+        memory.insert(var);
+    }
+}
+
+void ExprApp::setVariable(const std::shared_ptr<ID> &tokenId) {
+    auto id = tokenId->str();
+    auto find = memory.find(id);
+
+    try {
+        if(find == memory.end()) {
+            throw out_of_range("Out Of Range Error : ID \"" + id +
+                               "\" is not defined !" );
+        }
+    }
+    catch (out_of_range& err) {
+        cerr << err.what() << endl;
+    }
+
+    tokenId->set(find->second);
 }

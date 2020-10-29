@@ -8,13 +8,16 @@ class BasicToken : public AbstractToken {
 
     public:
 
-        inline BasicToken(const std::string& token) : _token(token) {}
+        inline BasicToken(const std::string& token) :
+            AbstractToken(TokenType::BASIC), _token(token) {}
 
         virtual inline void print(std::ostream &out) const override = 0;
 
         inline bool isOperator() const override final { return false; }
 
         inline bool isValue() const override final { return false; }
+
+        inline bool isID() const override final { return false; }
 
         inline std::string str() const override final { return _token; }
 

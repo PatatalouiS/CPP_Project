@@ -14,7 +14,7 @@ namespace Operators {
 namespace BasicCharacters {
     const std::string LPAR = "LPAR";
     const std::string RPAR = "RPAR";
-    const std::string PROMPT = "Expr>>  ";
+    const std::string PROMPT = "\033[0;32mExpr\033[0;31m>>>\033[0m   ";
     constexpr char LF = '\n';
     constexpr char CR = '\r';
     constexpr char SEMI = ';';

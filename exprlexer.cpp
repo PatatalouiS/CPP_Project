@@ -78,7 +78,7 @@ using namespace LexerActions;
 const vector<LexerRule> patterns {
     { regex("[0-9]+(\\.[0-9]+)?")           , createValue          },
     { regex("([a-zA-Z]|_)([a-zA-Z0-9]|_)*") , createID             },
-    { regex("(\\+|-|/|=|\\*)")                , createOperator       },
+    { regex("(\\+|-|/|=|\\*)")              , createOperator       },
     { regex("\\(")                          , createLPAR           },
     { regex("\\)")                          , createRPAR           },
     { regex("\\s+")                         , SCAN_LEXBUF          },

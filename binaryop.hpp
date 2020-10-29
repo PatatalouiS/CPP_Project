@@ -2,13 +2,13 @@
 #define BINARYOP_H
 
 #include "operator.hpp"
-
+#include "constants.hpp"
 
 class BinaryOp : public Operator {
 
     public:
 
-        using Operator::Operator;
+        BinaryOp(const char symbol) : Operator(symbol, TokenType::BINARY_OP) {}
 
         double eval(const double& opA, const double& opB) const override;
 

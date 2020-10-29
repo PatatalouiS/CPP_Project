@@ -11,11 +11,10 @@
 namespace PrintUtils {
 
 template<typename T>
-std::ostream& operator<< (std::ostream& out, const std::vector<T*>& v) {
-    for(const auto& el : v) {
-        out << *el;
+void printVector(const std::vector<std::shared_ptr<T>> v) {
+    for(auto& i : v) {
+        std::cout << *i << std::endl;
     }
-    return out;
 }
 
 }

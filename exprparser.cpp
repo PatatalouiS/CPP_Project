@@ -3,6 +3,7 @@
 #include "typealiases.hpp"
 #include "basictoken.hpp"
 #include "constants.hpp"
+#include "exprapp.hpp"
 
 #include <stack>
 
@@ -44,12 +45,20 @@ void parseOperator(Operator_ptr token,
     stack.push(token);
 }
 
+bool isVariableDefinition(const std::vector<AbstractToken_ptr>& tokens,
+                          const AbstractToken_ptr& token) {
+    return ((tokens.size() >= 3) && (tokens[0] == token) && (tokens[1]->str() == "="));
+}
+
 vector<EvaluableToken_ptr> ExprParser::parse(const vector<AbstractToken_ptr>& tokens) {
     stack<AbstractToken_ptr> stack;
         vector<EvaluableToken_ptr> out;
 
         for(auto& token : tokens) {
             if(token->isValue()) {
+                if(token->isID() && !isVariableDefinition(tokens, token)) {
+                    ExprApp::setVariable(tokenCast_ptr<ID>(token));
+                }
 
                 out.push_back(tokenCast_ptr<EvaluableToken>(token));
             }
