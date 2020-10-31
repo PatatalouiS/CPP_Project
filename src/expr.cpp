@@ -22,7 +22,7 @@ T topAndPop(stack<T>& stack) {
 Expr::Expr(const std::string& str) {
     auto tokens = ExprLexer::tokenize(str);
     auto parsedTokens = ExprParser::parse(tokens);
-    _polishedTokens = parsedTokens;
+     _polishedTokens = parsedTokens;
 }
 
 double Expr::eval() const {

@@ -2,6 +2,8 @@
 #include "typealiases.hpp"
 #include "exprparser.hpp"
 #include "exprapp.hpp"
+#include "constants.hpp"
+#include "error.hpp"
 
 #include <vector>
 #include <stack>
@@ -46,14 +48,47 @@ void parseOperator(Operator_ptr token,
 
 bool isVariableDefinition(const std::vector<AbstractToken_ptr>& tokens,
                           const AbstractToken_ptr& token) {
-    return ((tokens.size() >= 3) && (tokens[0] == token) && (tokens[1]->str() == "="));
+    return ((tokens.size() >= 3)
+            && (tokens[0] == token)
+            && (tokens[1]->str() == string(1, Operators::SET)));
+}
+
+bool validOperator(const Operator_ptr& ope,
+    const vector<AbstractToken_ptr>& tokens,
+    const unsigned int currentIndex){
+    auto valid = false;
+    auto nextIndex = currentIndex + 1;
+
+    if(ope->isUnary()) {
+        valid = (tokens.size() > 1)
+                && (nextIndex < tokens.size())
+                && (!tokens[nextIndex]->isOperator());
+
+    }
+    else {
+        valid = (tokens.size() > 1)
+                && (currentIndex != 0)
+                && (nextIndex < tokens.size());
+
+        if(nextIndex < tokens.size()) {
+            auto& nextToken = tokens[nextIndex];
+
+            if(nextToken->isOperator()) {
+                valid = valid && (tokenCast_ptr<Operator>(nextToken)->isUnary());
+            }
+        }
+    }
+    return valid;
 }
 
 vector<EvaluableToken_ptr> ExprParser::parse(const vector<AbstractToken_ptr>& tokens) {
     stack<AbstractToken_ptr> stack;
         vector<EvaluableToken_ptr> out;
 
-        for(auto& token : tokens) {
+        for(unsigned int i = 0; i < tokens.size(); ++i) {
+            auto& token = tokens[i];
+            cout << *token << endl;
+
             if(token->isValue()) {
                 if(token->isID() && !isVariableDefinition(tokens, token)) {
                     ExprApp::setVariable(tokenCast_ptr<ID>(token));
@@ -62,7 +97,14 @@ vector<EvaluableToken_ptr> ExprParser::parse(const vector<AbstractToken_ptr>& to
                 out.push_back(tokenCast_ptr<EvaluableToken>(token));
             }
             else if(token->isOperator()) {
-                parseOperator(tokenCast_ptr<Operator>(token), stack, out);
+                auto op = tokenCast_ptr<Operator>(token);
+                if(validOperator(op, tokens, i)) {
+                    parseOperator(tokenCast_ptr<Operator>(token), stack, out);
+                }
+                else {
+                    throw SyntaxError("Syntax Error : Bad position/missing operand"
+                                      " for operator \"" + op->str() + "\"");
+                }
             }
             else parseBasicToken(tokenCast_ptr<BasicToken>(token), stack, out);
         }

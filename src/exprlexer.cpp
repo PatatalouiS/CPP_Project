@@ -5,10 +5,11 @@
 #include "exprlexer.hpp"
 #include "unaryop.hpp"
 #include "id.hpp"
-#include "lexererror.hpp"
+#include "error.hpp"
 
 using namespace std;
 using namespace regex_constants;
+using namespace Operators;
 using LexerAction = function<AbstractToken_ptr(const string&)>;
 
 static AbstractToken_ptr previousToken = nullptr;
@@ -26,9 +27,10 @@ const LexerAction createConst = [](const string& s) {
 
 const LexerAction createOperator = [](const string& s) {
     shared_ptr<AbstractToken> op;
-    if((previousToken == nullptr)
+    if(((previousToken == nullptr)
        || previousToken->isOperator()
-       || (previousToken->str() == BasicCharacters::LPAR)) {
+       || (previousToken->str() == BasicCharacters::LPAR))
+        &&((s[0] == ADD) || s[0] == MIN)){
         op = make_shared<UnaryOp>(s.front());
     }
     else {
@@ -55,13 +57,7 @@ const LexerAction createID = [](const string& s) {
 };
 
 const LexerAction LEXER_ERROR = [](const string& s) {
-    try {
-        throw LexerError("Lexer Error : Unknow character \""+ s + "\"");
-    }
-    catch(LexerError& err) {
-        cerr << err.what() << endl;
-        exit(EXIT_FAILURE);
-    }
+    throw LexerError("Lexer Error : Unknow character \""+ s + "\"");
     return nullptr;
 };
 

@@ -3,6 +3,7 @@
 #include "utils.hpp"
 #include "constants.hpp"
 #include "expr.hpp"
+#include "error.hpp"
 
 #include <exception>
 
@@ -47,11 +48,19 @@ void ExprApp::run() {
                 stringToEval.pop_back();
             }
 
-            Expr expr(stringToEval);
-            auto result = expr.eval();
+            try{
+                Expr expr(stringToEval);
+                auto result = expr.eval();
 
-            if(line.back() != SEMI) {
-               cout << result << endl;
+                if(line.back() != SEMI) {
+                   cout << result << endl;
+                }
+            }
+            catch(SyntaxError& err) {
+                cerr << err.what() << endl;
+            }
+            catch(LexerError& err) {
+                cerr << err.what() << endl;
             }
         }
 
@@ -76,14 +85,10 @@ void ExprApp::setVariable(const std::shared_ptr<ID> &tokenId) {
     auto id = tokenId->str();
     auto find = memory.find(id);
 
-    try {
-        if(find == memory.end()) {
-            throw out_of_range("Out Of Range Error : ID \"" + id +
-                               "\" is not defined !" );
-        }
-    }
-    catch (out_of_range& err) {
-        cerr << err.what() << endl;
+
+    if(find == memory.end()) {
+        throw SyntaxError("Syntax Error : ID \"" + id +
+                           "\" is not defined !" );
     }
 
     tokenId->set(find->second);

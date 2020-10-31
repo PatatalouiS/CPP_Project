@@ -8,6 +8,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 OBJECTS_DIR= obj/
 
+
 # The following define makes your compiler warn you if you use any
 # feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -16,6 +17,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.14
 
+MAKEFILE = MakefileQt
+
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -23,32 +26,31 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.14
 
 # Input
 HEADERS += \
-    abstracttoken.hpp \
-    basictoken.hpp \
-    binaryop.hpp \
-    constants.hpp \
-    evaluabletoken.hpp \
-    expr.hpp \
-    exprapp.hpp \
-    exprlexer.hpp \
-    exprparser.hpp \
-    id.hpp \
-    memory.hpp \
-    operator.hpp \
-    tree.hpp \
-    typealiases.hpp \
-    unaryop.hpp \
-    utils.hpp \
-    value.hpp \
-	const.hpp \
-	lexererror.hpp
-SOURCES += expr.cpp main.cpp \
-    binaryop.cpp \
-    exprapp.cpp \
-    exprlexer.cpp \
-    exprparser.cpp \
-    id.cpp \
-    operator.cpp \
-    unaryop.cpp \
-    utils.cpp \
-	lexererror.cpp
+    src/abstracttoken.hpp \
+    src/basictoken.hpp \
+    src/binaryop.hpp \
+    src/constants.hpp \
+    src/error.hpp \
+    src/evaluabletoken.hpp \
+    src/expr.hpp \
+    src/exprapp.hpp \
+    src/exprlexer.hpp \
+    src/exprparser.hpp \
+    src/id.hpp \
+    src/memory.hpp \
+    src/operator.hpp \
+    src/tree.hpp \
+    src/typealiases.hpp \
+    src/unaryop.hpp \
+    src/utils.hpp \
+    src/value.hpp \
+	src/const.hpp
+SOURCES += src/expr.cpp src/main.cpp \
+    src/binaryop.cpp \
+    src/exprapp.cpp \
+    src/exprlexer.cpp \
+    src/exprparser.cpp \
+    src/id.cpp \
+    src/operator.cpp \
+    src/unaryop.cpp \
+    src/utils.cpp

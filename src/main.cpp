@@ -9,9 +9,11 @@ using namespace std;
 
 int main() {
 
+//    auto a = ExprParser::parse(ExprLexer::tokenize("="));
 
-    Tree<int> t;
-
+//    for(auto& b : a) {
+//        cout << *b << endl;
+//    }
 
     ExprApp::run();
     return 0;
