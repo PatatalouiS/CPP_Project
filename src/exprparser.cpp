@@ -15,6 +15,8 @@ shared_ptr<T> tokenCast_ptr(AbstractToken_ptr token) {
     return static_pointer_cast<T>(token);
 }
 
+namespace {
+
 void parseBasicToken(BasicToken_ptr uToken,
                        stack<AbstractToken_ptr>& stack,
                        vector<EvaluableToken_ptr>& out ) {
@@ -24,11 +26,18 @@ void parseBasicToken(BasicToken_ptr uToken,
         stack.push(uToken);
     }
     else {
-        while(stack.top()->isOperator()) {
+        while(!stack.empty() && stack.top()->isOperator()) {
             out.push_back(tokenCast_ptr<EvaluableToken>(stack.top()));
             stack.pop();
         }
-        stack.pop();
+
+        if(stack.empty() || (stack.top()->str() != BasicCharacters::LPAR)) {
+            throw SyntaxError("Syntax Error : Mismatched parentheses, missing "
+                              "\"(\" parenthese");
+        }
+        else {
+            stack.pop();
+        }
     }
 }
 
@@ -81,13 +90,15 @@ bool validOperator(const Operator_ptr& ope,
     return valid;
 }
 
+}
+
 vector<EvaluableToken_ptr> ExprParser::parse(const vector<AbstractToken_ptr>& tokens) {
     stack<AbstractToken_ptr> stack;
         vector<EvaluableToken_ptr> out;
 
         for(unsigned int i = 0; i < tokens.size(); ++i) {
             auto& token = tokens[i];
-            cout << *token << endl;
+            //cout << *token << endl;
 
             if(token->isValue()) {
                 if(token->isID() && !isVariableDefinition(tokens, token)) {
@@ -110,9 +121,15 @@ vector<EvaluableToken_ptr> ExprParser::parse(const vector<AbstractToken_ptr>& to
         }
 
         while(!stack.empty()) {
-            out.push_back(tokenCast_ptr<EvaluableToken>(stack.top()));
-            stack.pop();
+            auto remainingToken = stack.top();
+            if(remainingToken->str() == BasicCharacters::LPAR) {
+                throw SyntaxError("Syntax Error : Mismatched parentheses, missing "
+                                  "\")\" parenthese");
+            }
+            else {
+                out.push_back(tokenCast_ptr<EvaluableToken>(stack.top()));
+                stack.pop();
+            }
         }
-
         return out;
 }

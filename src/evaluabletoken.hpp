@@ -6,9 +6,7 @@
 
 #include "abstracttoken.hpp"
 
-/**
- * @brief The Token class, Abstract and cannot be instancied
- */
+
 class EvaluableToken : public AbstractToken {
 
     public :

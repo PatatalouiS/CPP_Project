@@ -39,7 +39,6 @@ HEADERS += \
     src/id.hpp \
     src/memory.hpp \
     src/operator.hpp \
-    src/tree.hpp \
     src/typealiases.hpp \
     src/unaryop.hpp \
     src/utils.hpp \
@@ -52,5 +51,4 @@ SOURCES += src/expr.cpp src/main.cpp \
     src/exprparser.cpp \
     src/id.cpp \
     src/operator.cpp \
-    src/unaryop.cpp \
-    src/utils.cpp
+    src/unaryop.cpp

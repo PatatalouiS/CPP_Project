@@ -29,10 +29,7 @@ double Expr::eval() const {
     stack<EvaluableToken_ptr> stack;
     vector<Const_ptr> tempResults;
 
-    //printVector(_polishedTokens);
-
        for(auto& token : _polishedTokens) {
-           //cout << "CurrentToken :  " << *token << endl;;
            if(!token->isOperator()) {
                stack.push(token);
            }
@@ -42,7 +39,6 @@ double Expr::eval() const {
 
                if(currentOperator->isUnary()) {
                    tempResults.emplace_back(make_unique<Const>(token->eval(op1)));
-                   //cout << "ONE_OP :  " << op1 << endl;
                }
                else {
                    if(currentOperator->str()[0] == Operators::SET) {
@@ -52,7 +48,6 @@ double Expr::eval() const {
                    }
                    else {
                        auto op2 = topAndPop(stack)->eval();
-                       //cout << "TWO_OP_2 :  " << op2 << endl;
                        tempResults.emplace_back(make_unique<Const>(token->eval(op2, op1)));
                    }
                }

@@ -13,7 +13,7 @@ using namespace BasicCharacters;
 Memory ExprApp::memory{Memory()};
 
 void ExprApp::run() {
-    auto pipeIsUsed = InputUtils::pipe_is_used();
+    auto pipeIsUsed = !isatty(fileno(stdin));
     string line;
 
     while(true) {
