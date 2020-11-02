@@ -1,6 +1,7 @@
 #ifndef EXPRAPP_HPP
 #define EXPRAPP_HPP
 
+#include <memory>
 #include <unordered_map>
 #include "id.hpp"
 

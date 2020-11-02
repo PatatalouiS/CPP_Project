@@ -15,7 +15,7 @@ using LexerAction = function<AbstractToken_ptr(const string&)>;
 static AbstractToken_ptr previousToken = nullptr;
 
 struct LexerRule {
-    regex regex;
+    regex reg_ex;
     LexerAction action;
 };
 
@@ -81,9 +81,9 @@ vector<AbstractToken_ptr> ExprLexer::tokenize(const string& expr)  {
     auto it = expr.cbegin();
 
     while(it != expr.cend()) {
-        for(const auto& [regex, action] : patterns) {
+        for(const auto& [reg_ex, action] : patterns) {
             smatch match;
-            if(regex_search(it, expr.cend(), match, regex, match_continuous)) {
+            if(regex_search(it, expr.cend(), match, reg_ex, match_continuous)) {
                 auto res = action(match.str());
 
                 if(res != nullptr) {

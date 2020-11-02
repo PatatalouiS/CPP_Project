@@ -5,7 +5,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
-
+#include <memory>
 
 namespace PrintUtils {
 

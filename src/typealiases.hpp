@@ -5,6 +5,7 @@
 #include "binaryop.hpp"
 #include "basictoken.hpp"
 #include "const.hpp"
+#include <memory>
 
 using AbstractToken_ptr = std::shared_ptr<AbstractToken>;
 using EvaluableToken_ptr = std::shared_ptr<EvaluableToken>;

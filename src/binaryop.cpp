@@ -1,5 +1,5 @@
 #include <unordered_map>
-
+#include <functional>
 #include "binaryop.hpp"
 #include "constants.hpp"
 

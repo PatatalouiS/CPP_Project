@@ -5,6 +5,7 @@
 #include "exprparser.hpp"
 #include "id.hpp"
 #include "exprapp.hpp"
+#include <memory>
 
 #include <stack>
 

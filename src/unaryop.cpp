@@ -1,4 +1,5 @@
 
+#include <functional>
 #include <unordered_map>
 #include "unaryop.hpp"
 #include "constants.hpp"
