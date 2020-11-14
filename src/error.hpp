@@ -13,5 +13,12 @@ class SyntaxError  : public std::runtime_error {
     using std::runtime_error::runtime_error;
 };
 
+class EvalError  : public std::runtime_error {
+    using std::runtime_error::runtime_error;
+};
+
+class NoDefError  : public std::runtime_error {
+    using std::runtime_error::runtime_error;
+};
 
 #endif // SYNTAXERROR_HPP

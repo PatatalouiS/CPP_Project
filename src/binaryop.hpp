@@ -7,9 +7,11 @@ class BinaryOp : public Operator {
 
     public:
 
-        BinaryOp(const char symbol) : Operator(symbol) {}
+        BinaryOp(const char symbol) :
+            Operator(symbol, static_cast<Type>(symbol))
+        {}
 
-        double eval(const double& opA, const double& opB) const override;
+        double eval(std::stack<AbstractToken_ptr>&) const override final;
 
         unsigned int precedence() const override final;
 

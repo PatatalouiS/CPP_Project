@@ -30,8 +30,8 @@ HEADERS += \
     src/basictoken.hpp \
     src/binaryop.hpp \
     src/constants.hpp \
+    src/constanttokens.hpp \
     src/error.hpp \
-    src/evaluabletoken.hpp \
     src/expr.hpp \
     src/exprapp.hpp \
     src/exprlexer.hpp \
@@ -43,7 +43,6 @@ HEADERS += \
     src/typealiases.hpp \
     src/unaryop.hpp \
     src/utils.hpp \
-    src/value.hpp \
 	src/const.hpp
 SOURCES += src/expr.cpp src/main.cpp \
     src/binaryop.cpp \

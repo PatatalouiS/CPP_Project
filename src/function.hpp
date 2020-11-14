@@ -12,6 +12,7 @@ using ComputeHandler = std::function<double(const Args&)>;
 
 struct FunctionDescriptor {
     unsigned int nbArgs;
+    bool variadic;
     ComputeHandler fct;
 };
 
@@ -21,7 +22,6 @@ class Func : public AbstractToken {
 
     public:
 
-
         Func(const std::string& name);
 
         inline bool isOperator() const override final { return false; }
@@ -30,19 +30,23 @@ class Func : public AbstractToken {
 
         inline bool isID() const override final { return false; }
 
+        inline bool isFunc() const override final { return true; }
+
         inline std::string str() const override final { return _name ;}
 
-        static bool isFunction(const std::string& str);
-
-        static unsigned int nbArgs(const std::string& funcName);
-
-        static double eval(const std::string& name, const std::vector<double>& args);
+        double eval(std::stack<AbstractToken_ptr>& stack) const override final;
 
         void print(std::ostream& out) const override final;
+
+        inline void setNbArgs(const unsigned int nbArgs) { _nbArgs = nbArgs; }
+
+        bool isVariadic() const;
 
     private:
 
         std::string _name;
+
+        unsigned int _nbArgs;
 
         static const FunctionMapper mapper;
 };

@@ -10,8 +10,7 @@ using namespace std;
 
 int main() {
     //ExprApp::run();
-
-    string expr("lerp(0.5,0,1)");
+    string expr("polynome(sqrt(4), cos(0) * 1, 1, 0 + 1, 1 + 1 ) * -2 ");
 
     ExprParser p;
 
@@ -30,6 +29,8 @@ int main() {
     }
 
     cout << Expr(expr).eval() << endl;
+
+   //cout <<  Expr("mama").eval() << endl;
 
     return 0;
 }

@@ -1,13 +1,16 @@
 #ifndef OPERATOR_HPP
 #define OPERATOR_HPP
 
-#include "evaluabletoken.hpp"
+#include "abstracttoken.hpp"
 
-class Operator : public EvaluableToken {
+class Operator : public AbstractToken {
 
     public:
 
-        inline Operator(const char symbol) :_symbol(symbol) {};
+        inline Operator(const char symbol, const Type type) :
+            AbstractToken(type),
+            _symbol(symbol)
+        {};
 
         inline std::string str() const override final { return std::string(1, _symbol); }
 
@@ -17,9 +20,11 @@ class Operator : public EvaluableToken {
 
         inline bool isID() const override { return false; }
 
+        inline bool isFunc() const override { return false; }
+
         virtual bool isUnary() const = 0;
 
-        virtual double eval(const double& opA, const double& opB) const override = 0;
+        virtual double eval(std::stack<AbstractToken_ptr>&) const override = 0;
 
         virtual unsigned int precedence() const = 0;
 

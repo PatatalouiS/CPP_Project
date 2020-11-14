@@ -1,18 +1,27 @@
 #ifndef ID_HPP
 #define ID_HPP
 
-#include "value.hpp"
+#include "abstracttoken.hpp"
 #include <optional>
 
-class ID : public Value {
+class ID : public AbstractToken {
 
     public:
 
-        inline ID(const std::string& id) : _id(id) {}
+        inline ID(const std::string& id) :
+            AbstractToken(Type::ID),
+            _id(id)
+        {}
 
-        double eval(const double&, const double&) const override final;
+        double eval(std::stack<AbstractToken_ptr>& eval) const override final;
 
         inline bool isID() const override final { return true; }
+
+        inline bool isOperator() const override final { return false; }
+
+        inline bool isValue() const override final { return false; }
+
+        inline bool isFunc() const override final { return false; }
 
         inline void set(double& value) { _value = value; }
 

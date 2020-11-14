@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include "unaryop.hpp"
 #include "constants.hpp"
+#include "typealiases.hpp"
+#include "utils.hpp"
 
 using namespace std;
 using namespace Operators;
@@ -18,8 +20,8 @@ const FunctorsMapper mapper {
 
 }
 
-double UnaryOp::eval(const double &op, const double &) const {
-    return mapper.at(_symbol)(op);
+double UnaryOp::eval(TokenStack& stack) const {
+    return mapper.at(_symbol)(topAndPop(stack)->eval(stack));
 }
 
 unsigned int UnaryOp::precedence() const {

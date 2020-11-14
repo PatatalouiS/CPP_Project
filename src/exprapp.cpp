@@ -81,15 +81,18 @@ void ExprApp::putVariable(const std::pair<std::string, double> &var) {
     }
 }
 
-void ExprApp::setVariable(const std::shared_ptr<ID> &tokenId) {
-    auto id = tokenId->str();
-    auto find = memory.find(id);
+double ExprApp::getVariable(const string& name) {
+    auto find = memory.find(name);
 
 
     if(find == memory.end()) {
-        throw SyntaxError("Syntax Error : ID \"" + id +
+        throw NoDefError("Syntax Error : ID \"" + name+
                            "\" is not defined !" );
     }
 
-    tokenId->set(find->second);
+    return find->second;
+}
+
+bool ExprApp::isDefined(const string& name) {
+    return memory.find(name) != memory.end();
 }

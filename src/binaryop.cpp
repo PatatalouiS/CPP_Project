@@ -2,6 +2,9 @@
 #include <functional>
 #include "binaryop.hpp"
 #include "constants.hpp"
+#include "typealiases.hpp"
+#include "utils.hpp"
+#include "exprapp.hpp"
 
 using namespace std;
 using BinaryOperation = std::function<double(const double&, const double&)>;
@@ -16,13 +19,20 @@ const FunctorsMapper mapper {
         { MIN, [](const double& a, const double& b) { return a - b;  }},
         { MUL, [](const double& a, const double& b) { return a * b;  }},
         { DIV, [](const double& a, const double& b) { return a / b;  }},
-        { SET, [](const double& a, const double&  ) { return a;      }}
 };
 
 }
 
-double BinaryOp::eval(const double& a, const double& b) const {
-    return mapper.at(_symbol)(a, b);
+double BinaryOp::eval(TokenStack& stack) const {
+    auto b = topAndPop(stack)->eval(stack);
+    auto a = topAndPop(stack);
+
+    if(a->isID() && (_symbol == SET)) {
+        ExprApp::putVariable({ a->str(), b });
+        return b;
+    }
+
+    return mapper.at(_symbol)(a->eval(stack), b);
 }
 
 unsigned int BinaryOp::precedence() const {

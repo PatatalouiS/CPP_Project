@@ -4,16 +4,16 @@
 
 #include "exprlexer.hpp"
 #include "unaryop.hpp"
-#include "constants.hpp"
+#include "binaryop.hpp"
 #include "id.hpp"
 #include "error.hpp"
 #include "function.hpp"
+#include "constanttokens.hpp"
 
-using namespace ConstantToken;
 using namespace std;
 using namespace regex_constants;
 using namespace Operators;
-using LexerAction = function<AbstractToken_ptr(const string&)>;
+using LexerAction = function<AbstractToken_ptr(const string&, TokenArray&)>;
 
 static AbstractToken_ptr previousToken = nullptr;
 
@@ -24,11 +24,11 @@ struct LexerRule {
 
 namespace LexerActions {
 
-const LexerAction createConst = [](const string& s) {
+const LexerAction createConst = [](const string& s, const TokenArray&) {
     return make_shared<Const>(stod(s));
 };
 
-const LexerAction createOperator = [](const string& s) {
+const LexerAction createOperator = [](const string& s, const TokenArray&) {
     shared_ptr<AbstractToken> op;
     if(((previousToken == nullptr)
        || previousToken->isOperator()
@@ -43,27 +43,32 @@ const LexerAction createOperator = [](const string& s) {
     return  op;
 };
 
-const LexerAction SCAN_LEXBUF = [](const string&) {
+const LexerAction SCAN_LEXBUF = [](const string&, TokenArray&) {
     return nullptr;
 };
 
-const LexerAction createLPAR = [](const string&) {
-    return LPAR;
+const LexerAction createLPAR = [](const string&, TokenArray& tA) {
+    if(previousToken->isID()) { // previou Token is a function call, let's change it
+        auto funcToken = make_shared<Func>(previousToken->str());
+        tA.back() = funcToken;
+        previousToken = funcToken;
+    }
+    return lPar;
 };
 
-const LexerAction createRPAR = [](const string&) {
-    return RPAR;
+const LexerAction createRPAR = [](const string&, TokenArray&) {
+    return rPar;
 };
 
-const LexerAction createCOMMA = [](const string&) {
-    return COMMA;
+const LexerAction createCOMMA = [](const string&, TokenArray&) {
+    return comma;
 };
 
-const LexerAction createID = [](const string& s) {
+const LexerAction createID = [](const string& s, TokenArray&) {
     return make_shared<ID>(s);
 };
 
-const LexerAction LEXER_ERROR = [](const string& s) {
+const LexerAction LEXER_ERROR = [](const string& s, TokenArray&) {
     throw LexerError("Lexer Error : Unknow character \""+ s + "\"");
     return nullptr;
 };
@@ -85,14 +90,14 @@ const vector<LexerRule> patterns {
 
 vector<AbstractToken_ptr> ExprLexer::tokenize(const string& expr)  {
     previousToken.reset();
-    vector<AbstractToken_ptr> tokenArray;
+    TokenArray tokenArray;
     auto it = expr.cbegin();
 
     while(it != expr.cend()) {
         for(const auto& [reg_ex, action] : patterns) {
             smatch match;
             if(regex_search(it, expr.cend(), match, reg_ex, match_continuous)) {
-                auto res = action(match.str());
+                auto res = action(match.str(), tokenArray);
 
                 if(res != nullptr) {
                     tokenArray.push_back(res);

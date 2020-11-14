@@ -15,8 +15,10 @@ class ExprApp {
 
         static void putVariable(const std::pair<std::string, double>& var);
 
-        static void setVariable(const std::shared_ptr<ID>& tokenId);
+        static double getVariable(const std::string& name);
 
+        static bool isDefined(const std::string& name)
+;
         static Memory memory;
 };
 

@@ -2,7 +2,6 @@
 #define CONSTANTS_HPP
 
 #include <string>
-#include "typealiases.hpp"
 #include <memory>
 
 namespace Operators {
@@ -11,12 +10,6 @@ namespace Operators {
     constexpr char DIV = '/';
     constexpr char MUL = '*';
     constexpr char SET = '=';
-}
-
-namespace ConstantToken {
-    const std::shared_ptr<AbstractToken> LPAR;
-    const std::shared_ptr<AbstractToken> RPAR;
-    const std::shared_ptr<AbstractToken> COMMA;
 }
 
 namespace BasicCharacters {
@@ -28,14 +21,5 @@ namespace BasicCharacters {
     constexpr char CR = '\r';
     constexpr char SEMI = ';';
 }
-
-enum class TokenType {
-    UNARY_OP,
-    BINARY_OP,
-    ID,
-    CONST,
-    BASIC
-};
-
 
 #endif // CONSTANTS_HPP

@@ -1,21 +1,29 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-#include "value.hpp"
+#include "abstracttoken.hpp"
 #include <string>
 
-class Const : public Value {
+class Const : public AbstractToken {
 
     public:
         Const() = delete;
 
-        inline Const(const double& value) : _value(value) {};
+        inline Const(const double& value) :
+            AbstractToken(Type::CONST),
+            _value(value) {};
 
-        inline double eval(const double&, const double&) const override final {
+        inline double eval(std::stack<AbstractToken_ptr>&) const override final {
             return _value;
         };
 
+        inline bool isOperator() const override final { return false; }
+
+        inline bool isValue() const override final { return true; }
+
         inline bool isID() const override final { return false; }
+
+        inline bool isFunc() const override final { return false; }
 
         inline std::string str() const override final { return std::to_string(_value); }
 

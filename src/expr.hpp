@@ -5,13 +5,17 @@
 #include <vector>
 #include "typealiases.hpp"
 
+
+
 class Expr {
 
     private :
 
         std::string _exprValue;
 
-        std::vector<EvaluableToken_ptr> _polishedTokens;
+        TokenArray _polishedTokens;
+
+        static double eval(const TokenArray& tokens);
 
     public:
 

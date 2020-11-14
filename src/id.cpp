@@ -1,21 +1,18 @@
 #include "id.hpp"
+#include "exprapp.hpp"
+#include "error.hpp"
 
 #include <exception>
 
 using namespace std;
 
-double ID::eval(const double &, const double &) const {
+double ID::eval(stack<AbstractToken_ptr>&) const {
     try {
-        if(!_value) {
-            throw bad_optional_access();
-        }
+       return ExprApp::getVariable(_id);
     }
-    catch(exception& err) {
-        cerr << err.what();
-        exit(EXIT_FAILURE);
+    catch(NoDefError& err) {
+        throw EvalError(err.what());
     }
-
-    return *_value;
 }
 
 void ID::print(std::ostream &out) const {
