@@ -4,6 +4,7 @@
 #include "exprapp.hpp"
 #include "constants.hpp"
 #include "error.hpp"
+#include "function.hpp"
 
 #include <vector>
 #include <stack>
@@ -26,16 +27,20 @@ void parseBasicToken(BasicToken_ptr uToken,
         stack.push(uToken);
     }
     else {
-        while(!stack.empty() && stack.top()->isOperator()) {
+        while(!stack.empty() && (stack.top()->str() != BasicCharacters::LPAR )) {
             out.push_back(tokenCast_ptr<EvaluableToken>(stack.top()));
             stack.pop();
         }
 
-        if(stack.empty() || (stack.top()->str() != BasicCharacters::LPAR)) {
+        if(stack.empty()) { // not found the expected LPAR
             throw SyntaxError("Syntax Error : Mismatched parentheses, missing "
                               "\"(\" parenthese");
         }
-        else {
+
+        stack.pop(); // pop the LPAR
+
+        if(Func::isFunction(stack.top()->str())) {
+            out.emplace_back(tokenCast_ptr<EvaluableToken>(stack.top()));
             stack.pop();
         }
     }
@@ -53,6 +58,19 @@ void parseOperator(Operator_ptr token,
     }
 
     stack.push(token);
+}
+
+void parseFunctionArgs(stack<AbstractToken_ptr>& stack,
+                       vector<EvaluableToken_ptr>& out) {
+    while(!stack.empty() && (stack.top()->str() != BasicCharacters::LPAR)) {
+        out.push_back(tokenCast_ptr<EvaluableToken>(stack.top()));
+        stack.pop();
+    }
+
+    if(stack.empty()) {
+        throw SyntaxError("Syntax Error : Mismatched parentheses, missing "
+                          "\"(\" parenthese");
+    }
 }
 
 bool isVariableDefinition(const std::vector<AbstractToken_ptr>& tokens,
@@ -101,11 +119,21 @@ vector<EvaluableToken_ptr> ExprParser::parse(const vector<AbstractToken_ptr>& to
             //cout << *token << endl;
 
             if(token->isValue()) {
-                if(token->isID() && !isVariableDefinition(tokens, token)) {
+                if(token->isID() && Func::isFunction(token->str())) {
+                    //cout << "hey" << endl;
+                    stack.push(token);
+                }
+                else if(token->isID() && !isVariableDefinition(tokens, token)) {
                     ExprApp::setVariable(tokenCast_ptr<ID>(token));
+                    out.push_back(tokenCast_ptr<EvaluableToken>(token));
+                }
+                else { // simple value
+                    out.push_back(tokenCast_ptr<EvaluableToken>(token));
                 }
 
-                out.push_back(tokenCast_ptr<EvaluableToken>(token));
+            }
+            else if(token->str() == BasicCharacters::COM) {
+                parseFunctionArgs(stack, out);
             }
             else if(token->isOperator()) {
                 auto op = tokenCast_ptr<Operator>(token);

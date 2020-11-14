@@ -4,9 +4,12 @@
 
 #include "exprlexer.hpp"
 #include "unaryop.hpp"
+#include "constants.hpp"
 #include "id.hpp"
 #include "error.hpp"
+#include "function.hpp"
 
+using namespace ConstantToken;
 using namespace std;
 using namespace regex_constants;
 using namespace Operators;
@@ -45,11 +48,15 @@ const LexerAction SCAN_LEXBUF = [](const string&) {
 };
 
 const LexerAction createLPAR = [](const string&) {
-    return make_shared<LPAR>();
+    return LPAR;
 };
 
 const LexerAction createRPAR = [](const string&) {
-    return make_shared<RPAR>();
+    return RPAR;
+};
+
+const LexerAction createCOMMA = [](const string&) {
+    return COMMA;
 };
 
 const LexerAction createID = [](const string& s) {
@@ -66,13 +73,14 @@ const LexerAction LEXER_ERROR = [](const string& s) {
 using namespace LexerActions;
 
 const vector<LexerRule> patterns {
-    { regex("[0-9]+(\\.[0-9]+)?")           , createConst          },
-    { regex("([a-zA-Z]|_)([a-zA-Z0-9]|_)*") , createID             },
-    { regex("(\\+|-|/|=|\\*)")              , createOperator       },
-    { regex("\\(")                          , createLPAR           },
-    { regex("\\)")                          , createRPAR           },
-    { regex("\\s+")                         , SCAN_LEXBUF          },
-    { regex(".")                            , LEXER_ERROR         }
+    { regex("[0-9]+(\\.[0-9]+)?")              , createConst          },
+    { regex("([a-zA-Z]|_)([a-zA-Z0-9]|_)*")    , createID             },
+    { regex("(\\+|-|/|=|\\*)")                 , createOperator       },
+    { regex("\\(")                             , createLPAR           },
+    { regex("\\)")                             , createRPAR           },
+    { regex(",")                               , createCOMMA          },
+    { regex("\\s+")                            , SCAN_LEXBUF          },
+    { regex(".")                               , LEXER_ERROR          }
 };
 
 vector<AbstractToken_ptr> ExprLexer::tokenize(const string& expr)  {

@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <memory>
+#include "typealiases.hpp"
 
 namespace PrintUtils {
 
@@ -17,5 +18,6 @@ void printVector(const std::vector<std::shared_ptr<T>> v) {
 }
 
 }
+
 
 #endif // UTILS_HPP

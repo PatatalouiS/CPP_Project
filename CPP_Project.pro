@@ -36,6 +36,7 @@ HEADERS += \
     src/exprapp.hpp \
     src/exprlexer.hpp \
     src/exprparser.hpp \
+    src/function.hpp \
     src/id.hpp \
     src/memory.hpp \
     src/operator.hpp \
@@ -49,6 +50,7 @@ SOURCES += src/expr.cpp src/main.cpp \
     src/exprapp.cpp \
     src/exprlexer.cpp \
     src/exprparser.cpp \
+    src/function.cpp \
     src/id.cpp \
     src/operator.cpp \
     src/unaryop.cpp

@@ -19,13 +19,11 @@ double ID::eval(const double &, const double &) const {
 }
 
 void ID::print(std::ostream &out) const {
-    out <<  "ID(" << _id << ", ";
+    out <<  "ID(" << _id;
 
-    if(!_value) {
-        out << "NO_VALUE";
+    if(_value) {
+        out << "," << " " <<*_value;
     }
-    else {
-        out << *_value;
-    }
+
     out << ")";
 }
