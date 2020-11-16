@@ -1,17 +1,21 @@
 
-/////    OLIVIE Maxime - M1 IGAI UPS     /////
-(Les commentaires de conception sont à la fin de ce README)
+/////    OLIVIE Maxime - M1 IGAI UPS  -   //////
+/////    README TP CPP Phase 2           //////
+
+(Les commentaires de conception sont à la fin de ce README,
+Au début ne figure qu'un rappel des instructions de compilation
+Et d'exécution)
 
 
 1) COMPILATION :
 
 Un Makefile est fourni, il ne fonctionnera que sur des systèmes UNIX et MACOS
-car il y a utilisation de certaines fonctions UNIX (notemment pour détecter si la commande est "pipée").
+car il y a utilisation de certaines fonctions UNIX (notamment pour détecter si la commande est "pipée").
 
 il faudra une version récente de g++ ou clang car la stdlib est utilisée
-dans sa version de 2017.
+dans sa version de 2017. (C++17)
 
-La compilation a été testée et se passe san aucune erreur sur :
+La compilation a été testée et se passe sans aucune erreur sur :
 - Debian 10 (Buster)
 - MAC OSX 10.14 (Mojave)
 
@@ -27,57 +31,66 @@ ou
 
 $ make veryclean
 
-Si jamais elle vous sont utiles.
+Si jamais elles vous sont utiles.
 N'hésitez pas a me contacter si vous avez des erreurs de compilation imprévues
 
 2 ) EXECUTION
 
 Apres avoir compilé les sources faire :
 
-$ ./ExprApp    // A peu pret comme un interpréteur python/Node
+$ ./ExprApp    // A peu prêt comme un interpréteur python/Node
 
 ou alors :
 
 $ cat [fichier] | ./ExprApp     // avec un pipe sur stdin
 
-3 ) CHOIX DE CONCEPTION : 
+3 ) MODIFICATIONS APPORTEES A LA PHASE 1 : 
 
-Les Lexer et Parser ont été encapsulés dans des classes simples.
+Une des principales gênes que j'avais avec ma précédente conception était l'utilisation trop fréquente des casts statiques sur mes pointeurs.
+C'est en jettant un coup d'oeil aux éléments de correction donnés que je me suis rendu compte que la signature de ma fonctions virtuelles eval() était
+Bien trop précise. En effet le type de eval(), précédemment, était (const double& a = 0, const double& = 0) -> double. Ceci a été changé
+Par (TokenStack& stack) -> double, ce qui fait respirer le code et en simplifie grandement l'évaluation, déléguant la gestion de la pile aux tokens et non plus a la classe Expr.
+Cela m'a permit donc de remplacer les arguments par défaut de l'ancienne signature, les arguments par défauts étant fortement déconseillés dans une fonction virtuelle pour cause
+de comportements curieux.
 
-Le Lexer a été écrit de manière assez fonctionnelle, c-a-d avec des lambdas + unordered_map et regex,
-car ayant déja paratiqué l'écriture de Lexer avec ocamllex et boost::spirit, le style fonctionnel se prête trés bien
-à cette tache et les normes C++ récentes apportent au language un caractère multi-paradigme qui lui est à mon avis trés profitable.
+Mis a part ceci, un peu de refactoring, et de simplification de la hiérarchie de classe, le code est resté identique à celui de la phase 1 
 
-Vous constaterez d'ailleurs que je n'ai pas utilisé le paradigme objet "a fond". Par exemple les classes binaryOp et
-UnaryOp sont les plus basses dans la hiérarchie de classe, j'ai préféré utiliser encore une fois des lambdas et des tableaux de fonctions
-pour instancier les différentes opérations (voir les fichiers BinaryOp.hpp et BinaryOp.cpp par exemple) car je trouve çela plus concis en général.
+4 ) COMMENTAIRES PHASE 2
 
-Des exceptions sont jetées pour divers cas d'erreurs (SyntaxError, et LexerError). J'ai peut être oublié certains cas d'erreurs mais normalement,
-les erreurs de type : parentheses hasardeuses, ID non défini, ou opérateur placé incorrectement sont gérées. Elle ne mettent pas fin au programme
-mais annulent la commande courante et re-affiche le "prompt" de l'application.
+J'ai trouvé cette phase bien plus facile que la première, surtout car elle est plus axée sur l'aspect fonctionnel du C++.
+J'ai directement commencé par considérer que toutes les fonctions étaient variadiques, les fonctions unaires et n-aires étants une sorte de "spécialisation".
+Une seule classe Func a donc été rajoutée. Une hashmap est utilisée pour accéder aux fonctions associées par leur nom (string). La valeur associée à la clé
+De la hashmap est une structure "wrapper" qui contient tout ce que nous avons besoin de savoir sur la fonction :
 
-Vous constaterez aussi que chaque fihier header .hpp n'a pas forcément un .cpp associé, souvent les classes définies ont des fonctions 
-trés courtes et sont donc directement inlinées dans le header.
+- son nombre d'arguments,
+- un booléen indiquant si elle est variadique,
+- Un handler d'exécution de cette fonction, de type (const Args&) -> double (Args étant un tableau d'arguments pour les fonctions)
 
-J'ai également utilisé les smart pointers, (souvent les shared_ptr) car j'ai besoin de partager l'ownership d'un token vers un tableau, une pile...
+Il suffit alors, dans la méthode virtuelle eval() de la classe Func, de dépiler autant d'arguments dans la pile qu'il y a d'arguments déclarés dans la fonction, puis d'exécuter le handler associé avec les arguments dépilés, mis dans un container.
 
-Pour l'impléméntation de la définition/utilisation de variales, le type optional a été utilisé pour symboliser le fait qu'un ID peut ne pas posséder de valeur
-(aide notemment à la gestion des erreurs sur un ID non défini).
+La détection du nombre d'arguments est faite par un algorithme qui compte le nombre de ',' présents jusqu'à la parenthèse fermante de l'appel de fonction,
+En prenant soin de ne compter que les ',' qui sont au même niveau de parenthésage que les parenthèses de l'appel de fonction, ce qui permet d'évaluer des expressions 
+complexes et imbriquées comme :
 
-Seules les feuilles de l'abre d'héritages sont instanciables, toutes les autres classes sont abstraites, avec de nombreuses méthodes virtuelles pures
+polynome(pow(1, 2) * 2, 2 - 1, -1*(-1), -(-1), cos(0) * cos(0) + 1 * lerp(0,1,1)) * -(-(-(-(-(-(-1))))))
+(  résultat : -7 )
 
-4 ) A AMELIORER
+Cette fonction renvoie le nombre d'arguments détectés dans un appel de fonction, ou renvoie null_opt si la détection est un échec
+(Erreur de syntaxe par exemple : "lerp(1,2,"   ).
 
-Avec un peu plus de temps, j'aurais améliorer le point faible de l'application, qui est à mon gout l'utilisation un peu trop fréquente
-des static_cast pour le transtypage. Ces casts sont sécurisés à l'aide de méthodes booléennes virtuelles qui renseignent le "type" d'un token, 
-mais impléménter un Design Pattern Visitor aurait permit de s'affranchir de tout ces casts et les déléguer à la machine, en interne.
+Enfin, une fois le nom de la fonction détecté et son nombre d'arguments calculé, on peux regarder si elle est valide. C'est à dire si une fonction de ce nom existe 
+Dans notre hashmap, avec le même nombre d'arguments si elle n'est pas variadique).
 
-Je me suis forcé a essayé d'utiliser un modele POO le plus possible, car c'est l'intitulé de l'UE, mais j'avoue que mélanger POO et Prog fonctionnelle
-est plus agréable pour moi en général, d'autant plus que le langage le permet aisément.
+toutes les fonctions demandées ont donc pu être implémentées.
 
-J'essaierai d'implémenter ce Design Pattern (et également la représentation en AST) pour le rendu final.
+5) A AMELIORER
 
-N'hésitez pas a me contacter si vous désirez plus de précisions, ou pour tout problème d'exécution/compilation
+A mon sens, Les défauts de ce code ne manquent pas. Il est parfois trop verbeux Mais le temps m'a manqué pour le peaufiner très précisément.
+J'espère avoir le temps pour le rendu final de TP pour le rendre tel que j'aimerai qu'il soit.
+
+
+
+
 
 
 
