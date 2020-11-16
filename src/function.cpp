@@ -1,9 +1,12 @@
 
 #include "function.hpp"
+#include "utils.hpp"
+
 #include <variant>
 #include <iostream>
 #include <cmath>
-#include "utils.hpp"
+#include <climits>
+#include <optional>
 
 using namespace std;
 
@@ -40,7 +43,7 @@ const Func::FunctionMapper Func::mapper {{
 }};
 
 
-Func::Func(const string& name, const optional<unsigned int> nbArgs) :
+Func::Func(const string& name, const optional<unsigned int> nbArgs) : 
     AbstractToken(Type::FUNC),
     _name(name),
     _nbArgs(nbArgs)

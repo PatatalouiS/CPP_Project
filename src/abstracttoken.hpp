@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <stack>
+#include <memory>
 
 enum class Type {
     LPAR,

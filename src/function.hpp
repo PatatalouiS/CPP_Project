@@ -1,11 +1,13 @@
 #ifndef FUNCTION_HPP
 #define FUNCTION_HPP
 
-#include <string>
-#include <vector>
-#include <unordered_map>
 #include "abstracttoken.hpp"
 #include "typealiases.hpp"
+
+#include <string>
+#include <vector>
+#include <functional>
+#include <unordered_map>
 
 using Args = std::vector<double>;
 

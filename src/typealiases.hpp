@@ -5,7 +5,10 @@
 #include "basictoken.hpp"
 #include "operator.hpp"
 #include "const.hpp"
+
 #include <memory>
+#include <vector>
+#include <stack>
 
 class Func;
 
