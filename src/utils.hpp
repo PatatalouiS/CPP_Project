@@ -9,8 +9,6 @@
 #include <stack>
 #include "typealiases.hpp"
 
-namespace PrintUtils {
-
 template<typename T>
 void printVector(const std::vector<std::shared_ptr<T>> v) {
     for(auto& i : v) {
@@ -27,22 +25,28 @@ void printStack(const std::stack<std::shared_ptr<T>> v) {
         copy.pop();
     }
     std::cout << "___END____" << std::endl;
-
-}
-
 }
 
 template<typename T>
 T topAndPop(std::stack<T>& stack) {
-    auto ptr = stack.top();
+    auto val = stack.top();
     stack.pop();
-    return ptr;
+    return val;
 }
+
+template <typename T>
+T backAndPop(std::vector<T>& vector) {
+    auto val = vector.back();
+    vector.pop_back();
+    return val;
+}
+
 
 template <typename T>
 std::shared_ptr<T> tokenCast_ptr(AbstractToken_ptr token) {
     return std::static_pointer_cast<T>(token);
 }
+
 
 
 #endif // UTILS_HPP

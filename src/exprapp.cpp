@@ -11,6 +11,8 @@ using namespace std;
 using namespace BasicCharacters;
 
 Memory ExprApp::memory{Memory()};
+bool ExprApp::semiIsUsed{false};
+const string ExprApp::PROMPT{"\033[0;32mExpr\033[0;31m>>>\033[0m   "};
 
 void ExprApp::run() {
     auto pipeIsUsed = !isatty(fileno(stdin));
@@ -18,9 +20,8 @@ void ExprApp::run() {
 
     while(true) {
 
-        if(!pipeIsUsed) {
+        if(!pipeIsUsed)
             cout << PROMPT;
-        }
 
         while(true) {
             auto character = cin.get();
@@ -37,24 +38,15 @@ void ExprApp::run() {
             }
         }
 
-        if((line.empty() && pipeIsUsed)) {
+        if((line.empty() && pipeIsUsed))
             break;
-        }
 
         if(!line.empty()) {
-            string stringToEval = line;
-
-            if(line.back() == SEMI) {
-                stringToEval.pop_back();
-            }
-
             try{
-                Expr expr(stringToEval);
-                auto result = expr.eval();
+                auto result = Expr(line).eval();
 
-                if(line.back() != SEMI) {
+                if(!semiIsUsed)
                    cout << result << endl;
-                }
             }
             catch(SyntaxError& err) {
                 cerr << err.what() << endl;
@@ -62,34 +54,33 @@ void ExprApp::run() {
             catch(LexerError& err) {
                 cerr << err.what() << endl;
             }
+            catch(EvalError& err) {
+                cerr << err.what() << endl;
+            }
+            catch(out_of_range& err) {
+                cerr << err.what() << endl;
+            }
         }
-
         line.clear();
     }
-
     cin.clear();
 }
 
 void ExprApp::putVariable(const std::pair<std::string, double> &var) {
     auto find = memory.find(var.first);
 
-    if(find != memory.end()) {
+    if(find != memory.end())
         find->second = var.second;
-    }
-    else {
+    else
         memory.insert(var);
-    }
 }
 
 double ExprApp::getVariable(const string& name) {
     auto find = memory.find(name);
 
-
-    if(find == memory.end()) {
+    if(find == memory.end())
         throw NoDefError("Syntax Error : ID \"" + name+
                            "\" is not defined !" );
-    }
-
     return find->second;
 }
 

@@ -7,6 +7,7 @@
 const std::shared_ptr<AbstractToken> lPar  = std::make_shared<LPAR>();
 const std::shared_ptr<AbstractToken> rPar  = std::make_shared<RPAR>();
 const std::shared_ptr<AbstractToken> comma = std::make_shared<COMMA>();
+const std::shared_ptr<AbstractToken> semi  = std::make_shared<SEMI>();
 
 
 #endif // CONSTANTTOKENS_HPP

@@ -7,9 +7,9 @@ class BinaryOp : public Operator {
 
     public:
 
-        BinaryOp(const char symbol) :
-            Operator(symbol, static_cast<Type>(symbol))
-        {}
+        BinaryOp() = delete;
+
+        using Operator::Operator;
 
         double eval(std::stack<AbstractToken_ptr>&) const override final;
 

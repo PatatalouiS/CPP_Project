@@ -7,8 +7,8 @@ class Operator : public AbstractToken {
 
     public:
 
-        inline Operator(const char symbol, const Type type) :
-            AbstractToken(type),
+        inline Operator(const char symbol) :
+            AbstractToken(Type::OPERATOR),
             _symbol(symbol)
         {};
 
@@ -16,7 +16,7 @@ class Operator : public AbstractToken {
 
         inline bool isOperator() const override { return true; }
 
-        inline bool isValue() const override { return false; }
+        inline bool isConst() const override { return false; }
 
         inline bool isID() const override { return false; }
 

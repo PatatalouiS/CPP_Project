@@ -18,9 +18,8 @@ double ID::eval(stack<AbstractToken_ptr>&) const {
 void ID::print(std::ostream &out) const {
     out <<  "ID(" << _id;
 
-    if(_value) {
+    if(_value)
         out << "," << " " <<*_value;
-    }
 
     out << ")";
 }

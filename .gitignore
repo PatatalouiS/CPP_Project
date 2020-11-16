@@ -7,3 +7,4 @@ CPP_Project
 MakefileQt
 *.test
 ExprApp
+.DS_Store

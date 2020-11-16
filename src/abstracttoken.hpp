@@ -4,17 +4,12 @@
 #include <iostream>
 #include <stack>
 
-enum class Type : char {
-    LPAR  = '(',
-    RPAR  = ')',
-    COMMA = ',',
-    ADD   = '+',
-    MIN   = '-',
-    DIV   = '/',
-    MUL   = '*',
-    SET   = '=',
-    U_ADD = 'p',
-    U_MIN = 'm',
+enum class Type {
+    LPAR,
+    RPAR,
+    COMMA,
+    SEMI,
+    OPERATOR,
     ID,
     CONST,
     FUNC
@@ -30,7 +25,7 @@ class AbstractToken {
 
         virtual bool isOperator () const = 0;
 
-        virtual bool isValue() const = 0;
+        virtual bool isConst() const = 0;
 
         virtual bool isID() const = 0;
 

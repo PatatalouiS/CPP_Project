@@ -19,7 +19,7 @@ class Const : public AbstractToken {
 
         inline bool isOperator() const override final { return false; }
 
-        inline bool isValue() const override final { return true; }
+        inline bool isConst() const override final { return true; }
 
         inline bool isID() const override final { return false; }
 

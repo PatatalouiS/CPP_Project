@@ -8,6 +8,8 @@ class ID : public AbstractToken {
 
     public:
 
+        ID() = delete;
+
         inline ID(const std::string& id) :
             AbstractToken(Type::ID),
             _id(id)
@@ -19,7 +21,7 @@ class ID : public AbstractToken {
 
         inline bool isOperator() const override final { return false; }
 
-        inline bool isValue() const override final { return false; }
+        inline bool isConst() const override final { return false; }
 
         inline bool isFunc() const override final { return false; }
 

@@ -17,8 +17,14 @@ class ExprApp {
 
         static double getVariable(const std::string& name);
 
-        static bool isDefined(const std::string& name)
-;
+        static bool isDefined(const std::string& name);
+
+        static bool semiIsUsed;
+
+    private:
+
+        static const std::string PROMPT;
+
         static Memory memory;
 };
 

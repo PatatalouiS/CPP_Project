@@ -8,25 +8,29 @@
 #include "typealiases.hpp"
 
 using Args = std::vector<double>;
-using ComputeHandler = std::function<double(const Args&)>;
-
-struct FunctionDescriptor {
-    unsigned int nbArgs;
-    bool variadic;
-    ComputeHandler fct;
-};
-
-using FunctionMapper = std::unordered_map<std::string, FunctionDescriptor>;
 
 class Func : public AbstractToken {
 
     public:
 
-        Func(const std::string& name);
+        using ComputeHandler = std::function<double(const Args&)>;
+
+        struct FunctionDescriptor {
+            unsigned int nbArgs;
+            bool variadic;
+            ComputeHandler fct;
+        };
+
+        using FunctionMapper = std::unordered_map<std::string, FunctionDescriptor>;
+
+
+        Func() = delete;
+
+        Func(const std::string& name, const std::optional<unsigned int> nbArgs);
 
         inline bool isOperator() const override final { return false; }
 
-        inline bool isValue() const override final { return false; }
+        inline bool isConst() const override final { return false; }
 
         inline bool isID() const override final { return false; }
 
@@ -40,13 +44,17 @@ class Func : public AbstractToken {
 
         inline void setNbArgs(const unsigned int nbArgs) { _nbArgs = nbArgs; }
 
+        const std::optional<unsigned int>& nbArgs() const;
+
         bool isVariadic() const;
+
+        static bool isDefined(const Func& func);
 
     private:
 
         std::string _name;
 
-        unsigned int _nbArgs;
+        std::optional<unsigned int> _nbArgs;
 
         static const FunctionMapper mapper;
 };

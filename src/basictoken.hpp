@@ -15,7 +15,7 @@ class BasicToken : public AbstractToken {
 
         inline bool isOperator() const override final { return false; }
 
-        inline bool isValue() const override final { return false; }
+        inline bool isConst() const override final { return false; }
 
         inline bool isID() const override final { return false; }
 
@@ -63,6 +63,17 @@ class COMMA : public BasicToken {
     public :
         inline COMMA() : BasicToken(Type::COMMA) {};
         inline std::string str() const override final { return BasicCharacters::COM; };
+};
+
+#endif  //COMMA_HPP
+
+#ifndef SEMI_HPP
+#define SEMI_HPP
+
+class SEMI : public BasicToken {
+    public :
+        inline SEMI() : BasicToken(Type::SEMI) {};
+        inline std::string str() const override final { return BasicCharacters::SEMI; };
 };
 
 #endif  //COMMA_HPP
