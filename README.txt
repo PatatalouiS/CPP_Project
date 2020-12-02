@@ -88,6 +88,11 @@ toutes les fonctions demandées ont donc pu être implémentées.
 A mon sens, Les défauts de ce code ne manquent pas. Il est parfois trop verbeux Mais le temps m'a manqué pour le peaufiner très précisément.
 J'espère avoir le temps pour le rendu final de TP pour le rendre tel que j'aimerai qu'il soit.
 
+Egalement, je trouve la gestion des erreurs satisfaisante, mais elle peut encore être améliorée avec un peu de temps en plus. Par exemple j'ai rajouté le cas :
+
+Expr >>> lerp(1, 2)
+Résultat : Syntax Error : Function : "lerp" with 2 arguments is not defined
+
 
 
 
