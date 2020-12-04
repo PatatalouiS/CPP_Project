@@ -11,11 +11,11 @@ class BinaryOp : public Operator {
 
         using Operator::Operator;
 
-        double eval(std::stack<AbstractToken_ptr>&) const override final;
+        ValueExpr eval(std::stack<AbstractToken_ptr>&) const override final;
 
         unsigned int precedence() const override final;
 
-        inline bool isUnary() const override final { return false; }
+        inline bool isBinary() const override { return true; }
 
         inline void print(std::ostream &out) const override final {
             out << "BinaryOp(" << _symbol << ")";

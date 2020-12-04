@@ -16,15 +16,13 @@ class Operator : public AbstractToken {
 
         inline bool isOperator() const override { return true; }
 
-        inline bool isConst() const override { return false; }
+        inline virtual bool isSet() const { return false; }
 
-        inline bool isID() const override { return false; }
+        inline virtual bool isUnary() const { return false; }
 
-        inline bool isFunc() const override { return false; }
+        inline virtual bool isBinary() const { return false; }
 
-        virtual bool isUnary() const = 0;
-
-        virtual double eval(std::stack<AbstractToken_ptr>&) const override = 0;
+        virtual ValueExpr eval(std::stack<AbstractToken_ptr>&) const override = 0;
 
         virtual unsigned int precedence() const = 0;
 

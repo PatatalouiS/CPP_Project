@@ -15,6 +15,8 @@ using namespace std;
 
 namespace {
 
+constexpr unsigned int NB_MIN_TOKENS_FOR_SET_COMMAND = 3;
+
 bool validOperator(const Operator_ptr& ope,
     const vector<AbstractToken_ptr>& tokens,
     const unsigned int currentIndex){
@@ -43,6 +45,14 @@ bool validOperator(const Operator_ptr& ope,
     return valid;
 }
 
+bool currifiedDefinition(const Func_ptr& func,
+                           const TokenArray& tokens,
+                           const unsigned int currentIndex ) {
+    return((tokens.size() >= NB_MIN_TOKENS_FOR_SET_COMMAND)
+        && (tokens[1]->str().back() == Operators::SET)
+        && Func::isValidForCurrying(*func));
+}
+
 }
 
 namespace ParsingHandler  {
@@ -51,57 +61,24 @@ void parseConst(const AbstractToken_ptr& tok, TokenArray& out) {
     out.push_back(tok);
 }
 
-unsigned int parseNbArgs(const TokenArray& tokens,
-                           const unsigned int funcIndex) {
-    TokenArray parseFirstArg;
-    auto movingIndex = funcIndex + 2;
-    auto LPARcount = 1;
-    auto nbComma = 0;
-    bool finished = false;
+void parseFunc(const AbstractToken_ptr& funcPtr,
+               TokenStack& stack,
+               const TokenArray& tokens,
+               const unsigned int currentIndex) {
 
-    if((movingIndex < tokens.size()) && (tokens[movingIndex]->type() == Type::RPAR))
-        return 0;
+     auto function = tokenCast_ptr<Func>(funcPtr);
 
-    while(movingIndex < tokens.size() && !finished) {
-        auto tok = tokens[movingIndex];
+    if (!currifiedDefinition(function, tokens, currentIndex) &&
+        !Func::isDefined(*function)) {
 
-        if(tok->type() == Type::LPAR) {
-           ++LPARcount;
-        }
-        else if(tok->type() == Type::RPAR) {
-           --LPARcount;
-            if(LPARcount == 0) {
-                finished = true;
-            }
-        }
-        else if(tok->type() == Type::COMMA) {
-           if(LPARcount == 1) {
-               ++nbComma;
-           }
-        }
-
-        if(finished)
-            break;
-        else
-            ++movingIndex;
+        throw SyntaxError("Syntax Error : Function : \"" + function->str() +
+                            "\" with " + to_string(function->nbArgs().value()) +
+                            " arguments is not defined");
+    }
+    else if(currifiedDefinition(function, tokens, currentIndex)) {
+        cout << "hcurrfied" << endl;
     }
 
-    if(LPARcount != 0)
-        throw SyntaxError("Syntax Error : Mismatched parentheses, missing "
-                          "\")\" parenthese");
-
-    return nbComma + 1;
-}
-
-void parseFunc(const AbstractToken_ptr& funcPtr,
-               TokenStack& stack) {
-
-    auto function = *tokenCast_ptr<Func>(funcPtr);
-
-    if(!Func::isDefined(function))
-        throw SyntaxError("Syntax Error : Function : \"" + function.str() +
-                            "\" with " + to_string(function.nbArgs().value()) +
-                            " arguments is not defined");
     stack.push(funcPtr);
 }
 
@@ -183,8 +160,12 @@ TokenArray ExprParser::parse(const TokenArray& tokens) {
                 parseConst(token, out);
                 break;
 
+            case Type::PLACEHOLDER :
+                parseConst(token, out);
+                break;
+
             case Type::FUNC :
-                parseFunc(token, stack);
+                parseFunc(token, stack, tokens, i);
                 break;
 
             case Type::ID :

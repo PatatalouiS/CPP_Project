@@ -20,8 +20,8 @@ const FunctorsMapper mapper {
 
 }
 
-double UnaryOp::eval(TokenStack& stack) const {
-    return mapper.at(_symbol)(topAndPop(stack)->eval(stack));
+ValueExpr UnaryOp::eval(TokenStack& stack) const {
+    return mapper.at(_symbol)(get<double>(topAndPop(stack)->eval(stack)));
 }
 
 unsigned int UnaryOp::precedence() const {

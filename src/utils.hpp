@@ -8,6 +8,7 @@
 #include <memory>
 #include <stack>
 #include "typealiases.hpp"
+#include "funcutils.hpp"
 
 template<typename T>
 void printVector(const std::vector<std::shared_ptr<T>> v) {
@@ -47,6 +48,8 @@ std::shared_ptr<T> tokenCast_ptr(AbstractToken_ptr token) {
     return std::static_pointer_cast<T>(token);
 }
 
+std::ostream& operator<< (std::ostream& out, const FuncResult& r);
+std::ostream& operator<< (std::ostream& out, const ValueExpr& val);
 
 
 #endif // UTILS_HPP

@@ -37,9 +37,12 @@ HEADERS += \
     src/exprlexer.hpp \
     src/exprparser.hpp \
     src/function.hpp \
+    src/funcutils.hpp \
     src/id.hpp \
     src/memory.hpp \
     src/operator.hpp \
+    src/placeholder.hpp \
+    src/setoperator.hpp \
     src/typealiases.hpp \
     src/unaryop.hpp \
     src/utils.hpp \
@@ -52,4 +55,7 @@ SOURCES += src/expr.cpp src/main.cpp \
     src/function.cpp \
     src/id.cpp \
     src/operator.cpp \
-    src/unaryop.cpp
+    src/placeholder.cpp \
+    src/setoperator.cpp \
+    src/unaryop.cpp \
+    src/utils.cpp

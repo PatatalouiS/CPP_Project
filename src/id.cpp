@@ -1,14 +1,15 @@
 #include "id.hpp"
 #include "exprapp.hpp"
 #include "error.hpp"
+#include "typealiases.hpp"
 
 #include <exception>
 
 using namespace std;
 
-double ID::eval(stack<AbstractToken_ptr>&) const {
+ValueExpr ID::eval(stack<AbstractToken_ptr>&) const {
     try {
-       return ExprApp::getVariable(_id);
+        return ExprApp::getVariable(_id);
     }
     catch(NoDefError& err) {
         throw EvalError(err.what());

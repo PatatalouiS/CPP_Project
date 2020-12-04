@@ -23,16 +23,10 @@ const FunctorsMapper mapper {
 
 }
 
-double BinaryOp::eval(TokenStack& stack) const {
-    auto b = topAndPop(stack)->eval(stack);
-    auto a = topAndPop(stack);
-
-    if(a->isID() && (_symbol == SET)) {
-        ExprApp::putVariable({ a->str(), b });
-        return b;
-    }
-
-    return mapper.at(_symbol)(a->eval(stack), b);
+ValueExpr BinaryOp::eval(TokenStack& stack) const {
+    auto b = get<double>(topAndPop(stack)->eval(stack));
+    auto a = get<double>(topAndPop(stack)->eval(stack));
+    return mapper.at(_symbol)(a, b);
 }
 
 unsigned int BinaryOp::precedence() const {
@@ -41,7 +35,6 @@ unsigned int BinaryOp::precedence() const {
         case MIN : return 2; break;
         case MUL : return 3; break;
         case DIV : return 3; break;
-        case SET : return 1; break;
         default :  return -1;
     }
 }

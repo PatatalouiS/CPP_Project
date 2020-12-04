@@ -4,6 +4,10 @@
 #include <iostream>
 #include <stack>
 #include <memory>
+#include <optional>
+#include <variant>
+
+#include "funcutils.hpp"
 
 enum class Type {
     LPAR,
@@ -13,8 +17,12 @@ enum class Type {
     OPERATOR,
     ID,
     CONST,
-    FUNC
+    FUNC,
+    PLACEHOLDER
 };
+
+
+using ValueExpr = std::variant<double, FuncResult>;
 
 class AbstractToken {
 
@@ -22,21 +30,23 @@ class AbstractToken {
 
         using AbstractToken_ptr = std::shared_ptr<AbstractToken>;
 
-        inline AbstractToken(Type type) : _type(type) {};
+        inline AbstractToken(Type type) : _type(type) {}
 
-        virtual bool isOperator () const = 0;
+        virtual bool isOperator () const { return false; }
 
-        virtual bool isConst() const = 0;
+        virtual bool isConst() const { return false; }
 
-        virtual bool isID() const = 0;
+        virtual bool isID() const { return false; }
 
-        virtual bool isFunc() const = 0;
+        virtual bool isFunc() const { return false; }
+
+        virtual bool isPlaceHolder() const { return false; }
 
         virtual std::string str() const = 0;
 
         virtual void print(std::ostream& out) const = 0;
 
-        virtual double eval(std::stack<AbstractToken_ptr>& stack) const = 0;
+        virtual ValueExpr eval(std::stack<AbstractToken_ptr>& stack) const = 0;
 
         inline friend std::ostream& operator<< (std::ostream& out, const AbstractToken& t) {
             t.print(std::cout);

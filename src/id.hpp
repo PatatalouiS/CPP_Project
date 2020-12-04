@@ -15,15 +15,9 @@ class ID : public AbstractToken {
             _id(id)
         {}
 
-        double eval(std::stack<AbstractToken_ptr>& eval) const override final;
+        ValueExpr eval(std::stack<AbstractToken_ptr>& eval) const override final;
 
         inline bool isID() const override final { return true; }
-
-        inline bool isOperator() const override final { return false; }
-
-        inline bool isConst() const override final { return false; }
-
-        inline bool isFunc() const override final { return false; }
 
         inline void set(double& value) { _value = value; }
 

@@ -11,7 +11,7 @@ class UnaryOp : public Operator {
 
         using Operator::Operator;
 
-        double eval(std::stack<AbstractToken_ptr>& stack) const override final;
+        ValueExpr eval(std::stack<AbstractToken_ptr>& stack) const override final;
 
         unsigned int precedence() const override final;
 

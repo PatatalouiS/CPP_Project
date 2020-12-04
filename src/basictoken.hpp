@@ -13,17 +13,9 @@ class BasicToken : public AbstractToken {
             AbstractToken(type)
         {};
 
-        inline bool isOperator() const override final { return false; }
-
-        inline bool isConst() const override final { return false; }
-
-        inline bool isID() const override final { return false; }
-
-        inline bool isFunc() const override { return false; }
-
         virtual std::string str() const override = 0;
 
-        double eval(std::stack<AbstractToken_ptr> &) const override final {
+        ValueExpr eval(std::stack<AbstractToken_ptr> &) const override final {
             throw EvalError("This token is not evaluable");
         };
 

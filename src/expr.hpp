@@ -5,8 +5,6 @@
 #include <vector>
 #include "typealiases.hpp"
 
-
-
 class Expr {
 
     private :
@@ -15,13 +13,15 @@ class Expr {
 
         TokenArray _polishedTokens;
 
-        static double eval(const TokenArray& tokens);
+        bool setVariable;
+
+        static ValueExpr eval(const TokenArray& tokens, bool setVariable);
 
     public:
 
         Expr(const std::string& str);
 
-        double eval() const;
+        ValueExpr eval() const;
 
         void print();
 };

@@ -9,6 +9,7 @@
 #include "error.hpp"
 #include "function.hpp"
 #include "constanttokens.hpp"
+#include "placeholder.hpp"
 
 using namespace std;
 using namespace regex_constants;
@@ -45,16 +46,17 @@ bool isUnaryOperator(const char c) {
         &&((c == ADD) || c == MIN));
 }
 
-optional<unsigned int> getNbArgs(const string& expr,
+pair<optional<unsigned int>, bool> getNbArgs(const string& expr,
                            const unsigned int lParIndex) {
 
     auto movingIndex = lParIndex + 1;
     auto LPARcount = 1;
     auto nbComma = 0;
+    bool placeHolder;
     bool finished = false;
 
     if((movingIndex < expr.size()) && (expr[movingIndex] == RPAR))
-        return 0;
+        return { 0, false };
 
     while(movingIndex < expr.size() && !finished) {
         auto currentChar = expr[movingIndex];
@@ -71,17 +73,18 @@ optional<unsigned int> getNbArgs(const string& expr,
            if(LPARcount == 1)
                ++nbComma;
         }
+        else if(currentChar == '_') {
+            if(LPARcount == 1)
+                placeHolder = true;
+        }
 
-        if(finished)
-            break;
-        else
-            ++movingIndex;
+        ++movingIndex;
     }
 
     if(LPARcount != 0)
-        return nullopt;
+        return { nullopt, placeHolder };
 
-    return nbComma + 1;
+    return { nbComma + 1, placeHolder };
 }
 
 }
@@ -92,13 +95,26 @@ const LexerAction createConst = [](LexerState& state) {
     return make_shared<Const>(stod(state.matchedString));
 };
 
+const LexerAction createPlaceHolder = [](LexerState& state) {
+    auto order = stoi(state.matchedString.substr(1, state.matchedString.size()));
+
+    if(order <= 0) {
+        throw LexerError("Lexer Error : placeholder cant' have value : "
+                         + to_string(order) + ". PlaceHolder value must be"
+                         + "stricty poisitive.");
+    }
+
+    return make_shared<PlaceHolder>(order);
+};
+
 const LexerAction createID = [](LexerState& state) {
     return make_shared<ID>(state.matchedString);
 };
 
 const LexerAction createFunc = [](LexerState& state) {
     auto nbArgs = getNbArgs(state.expression, state.currentIndex);
-    auto func = make_shared<Func>(previousToken->str(), nbArgs);
+    auto func = make_shared<Func>(previousToken->str(), nbArgs.first);
+    func->setPlaceHolder(nbArgs.second);
     state.out.back() = func;
     previousToken = func;
     return nullptr;
@@ -107,9 +123,14 @@ const LexerAction createFunc = [](LexerState& state) {
 const LexerAction createOperator = [](LexerState& state) {
     auto operatorChar = state.matchedString.front();
     AbstractToken_ptr token;
-    return isUnaryOperator(operatorChar)
-        ? token = make_shared<UnaryOp>(operatorChar)
-        : token = make_shared<BinaryOp>(operatorChar);
+
+    if(isUnaryOperator(operatorChar))
+        token = make_shared<UnaryOp>(operatorChar);
+    else if (operatorChar == Operators::SET)
+        token = set;
+    else
+        token = make_shared<BinaryOp>(operatorChar);
+    return token;
 };
 
 const LexerAction createLPAR = [](LexerState& state) {
@@ -146,7 +167,8 @@ using namespace LexerActions;
 
 const vector<LexerRule> patterns {
     { regex("[0-9]+(\\.[0-9]+)?")              , createConst          },
-    { regex("([a-zA-Z]|_)([a-zA-Z0-9]|_)*")    , createID             },
+    { regex("_[1-9]+")                         , createPlaceHolder    },
+    { regex("([a-zA-Z])([a-zA-Z0-9])*")        , createID             },
     { regex("(\\+|-|/|=|\\*)")                 , createOperator       },
     { regex("\\(")                             , createLPAR           },
     { regex("\\)")                             , createRPAR           },
