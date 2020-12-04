@@ -101,7 +101,7 @@ const LexerAction createPlaceHolder = [](LexerState& state) {
     if(order <= 0) {
         throw LexerError("Lexer Error : placeholder cant' have value : "
                          + to_string(order) + ". PlaceHolder value must be"
-                         + "stricty poisitive.");
+                         + " strictly poisitive. ( _1 is valid )");
     }
 
     return make_shared<PlaceHolder>(order);
@@ -167,7 +167,7 @@ using namespace LexerActions;
 
 const vector<LexerRule> patterns {
     { regex("[0-9]+(\\.[0-9]+)?")              , createConst          },
-    { regex("_[1-9]+")                         , createPlaceHolder    },
+    { regex("_[0-9]+")                         , createPlaceHolder    },
     { regex("([a-zA-Z])([a-zA-Z0-9])*")        , createID             },
     { regex("(\\+|-|/|=|\\*)")                 , createOperator       },
     { regex("\\(")                             , createLPAR           },

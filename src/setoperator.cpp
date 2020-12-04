@@ -2,6 +2,7 @@
 #include "utils.hpp"
 #include "exprapp.hpp"
 #include <iostream>
+#include <cassert>
 #include "function.hpp"
 #include "placeholder.hpp"
 
