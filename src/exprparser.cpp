@@ -46,8 +46,7 @@ bool validOperator(const Operator_ptr& ope,
 }
 
 bool currifiedDefinition(const Func_ptr& func,
-                           const TokenArray& tokens,
-                           const unsigned int currentIndex ) {
+                           const TokenArray& tokens) {
     return((tokens.size() >= NB_MIN_TOKENS_FOR_SET_COMMAND)
         && (tokens[1]->str().back() == Operators::SET)
         && Func::isValidForCurrying(*func));
@@ -63,22 +62,17 @@ void parseConst(const AbstractToken_ptr& tok, TokenArray& out) {
 
 void parseFunc(const AbstractToken_ptr& funcPtr,
                TokenStack& stack,
-               const TokenArray& tokens,
-               const unsigned int currentIndex) {
+               const TokenArray& tokens) {
 
-     auto function = tokenCast_ptr<Func>(funcPtr);
+    auto function = tokenCast_ptr<Func>(funcPtr);
 
-    if (!currifiedDefinition(function, tokens, currentIndex) &&
+    if (!currifiedDefinition(function, tokens) &&
         !Func::isDefined(*function)) {
 
         throw SyntaxError("Syntax Error : Function : \"" + function->str() +
                             "\" with " + to_string(function->nbArgs().value()) +
                             " arguments is not defined");
     }
-    else if(currifiedDefinition(function, tokens, currentIndex)) {
-        cout << "hcurrfied" << endl;
-    }
-
     stack.push(funcPtr);
 }
 
@@ -165,7 +159,7 @@ TokenArray ExprParser::parse(const TokenArray& tokens) {
                 break;
 
             case Type::FUNC :
-                parseFunc(token, stack, tokens, i);
+                parseFunc(token, stack, tokens);
                 break;
 
             case Type::ID :

@@ -55,7 +55,7 @@ void Func::print(ostream& out) const {
     out << "FUN(" << _name << ")";
 }
 
-ValueExpr Func::eval(std::stack<AbstractToken_ptr>& stack) const {
+ValueExpr Func::eval(stack<AbstractToken_ptr>& stack) const {
     auto func = mapper.find(_name);
 
     if(func == mapper.end())

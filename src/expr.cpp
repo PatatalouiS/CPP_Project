@@ -40,7 +40,6 @@ ValueExpr Expr::eval(const TokenArray& tokens,  bool setVariable)  {
     ValueExpr result;
 
     for (const auto& token : tokens) {
-        cout << *token << endl;
 
         if(toDefineLater(token, setVariable) || token->isPlaceHolder()) {
             stack.push(token);
