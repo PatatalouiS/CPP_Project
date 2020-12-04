@@ -1,6 +1,6 @@
 
 /////    OLIVIE Maxime - M1 IGAI UPS  -   //////
-/////    README TP CPP Phase 2           //////
+/////    README TP CPP Phase 3           //////
 
 (Les commentaires de conception sont à la fin de ce README,
 Au début ne figure qu'un rappel des instructions de compilation
@@ -44,55 +44,56 @@ ou alors :
 
 $ cat [fichier] | ./ExprApp     // avec un pipe sur stdin
 
-3 ) MODIFICATIONS APPORTEES A LA PHASE 1 : 
+3 ) MODIFICATIONS APPORTEES A LA PHASE 2 : 
 
-Une des principales gênes que j'avais avec ma précédente conception était l'utilisation trop fréquente des casts statiques sur mes pointeurs.
-C'est en jettant un coup d'oeil aux éléments de correction donnés que je me suis rendu compte que la signature de ma fonctions virtuelles eval() était
-Bien trop précise. En effet le type de eval(), précédemment, était (const double& a = 0, const double& = 0) -> double. Ceci a été changé
-Par (TokenStack& stack) -> double, ce qui fait respirer le code et en simplifie grandement l'évaluation, déléguant la gestion de la pile aux tokens et non plus a la classe Expr.
-Cela m'a permit donc de remplacer les arguments par défaut de l'ancienne signature, les arguments par défauts étant fortement déconseillés dans une fonction virtuelle pour cause
-de comportements curieux.
-
-Mis a part ceci, un peu de refactoring, et de simplification de la hiérarchie de classe, le code est resté identique à celui de la phase 1 
+Un peu de refactoring général du code a été fait dans un but de simplification. Mmis à part ceci, le code que j'ai présenté en phase 2, mis à part les ajouts de phase 3, reste inchangé.
 
 4 ) COMMENTAIRES PHASE 2
 
-J'ai trouvé cette phase bien plus facile que la première, surtout car elle est plus axée sur l'aspect fonctionnel du C++.
-J'ai directement commencé par considérer que toutes les fonctions étaient variadiques, les fonctions unaires et n-aires étants une sorte de "spécialisation".
-Une seule classe Func a donc été rajoutée. Une hashmap est utilisée pour accéder aux fonctions associées par leur nom (string). La valeur associée à la clé
-De la hashmap est une structure "wrapper" qui contient tout ce que nous avons besoin de savoir sur la fonction :
+J'ai trouvé cette phase assez simple, surtout car je suis un grand fan de l'aspect fonctionnel du C++, que l'on doit ici utiliser à foison.
+J'ai considéré maintenant que une évaluation d'une instruction peux avoir 2 types de retour : un double, ou une fonction.
+La classe "setoperator" a été créee, elle représente l'opérateur '=', et cette classe a pour but de réaliser les affectations
+de variables , que ce soit des réels ou des fonctions.
 
-- son nombre d'arguments,
-- un booléen indiquant si elle est variadique,
-- Un handler d'exécution de cette fonction, de type (const Args&) -> double (Args étant un tableau d'arguments pour les fonctions)
+L'essentiel du code de cette phase ce trouve donc dans la classe 'setoperator'. 
 
-Il suffit alors, dans la méthode virtuelle eval() de la classe Func, de dépiler autant d'arguments dans la pile qu'il y a d'arguments déclarés dans la fonction, puis d'exécuter le handler associé avec les arguments dépilés, mis dans un container.
+Pour la curryfication, je créer une nouvelle fonction et l'ajoute à la "table des fonctions" de l'application. cette fonction est définie par une lambda, qui prend en paramètre les arguments restants à donner pour l'évaluation. La liste complete des arguments est recrée en utilisant le liste des premiers arguments en capure de la lambda.
 
-La détection du nombre d'arguments est faite par un algorithme qui compte le nombre de ',' présents jusqu'à la parenthèse fermante de l'appel de fonction,
-En prenant soin de ne compter que les ',' qui sont au même niveau de parenthésage que les parenthèses de l'appel de fonction, ce qui permet d'évaluer des expressions 
-complexes et imbriquées comme :
+On a le comportement voulu cad :
 
-polynome(pow(1, 2) * 2, 2 - 1, -1*(-1), -(-1), cos(0) * cos(0) + 1 * lerp(0,1,1)) * -(-(-(-(-(-(-1))))))
-(  résultat : -7 )
+Expr>>>   myfunc = lerp(0.7)
+	Function : myfunc
+	Type : ( val * val ) -> val
+Expr>>>   myfunc2 = myfunc(3)
+	Function : myfunc2
+	Type : ( val ) -> val
+Expr>>>   myfunc2(4)
+	3.7
 
-Cette fonction renvoie le nombre d'arguments détectés dans un appel de fonction, ou renvoie null_opt si la détection est un échec
-(Erreur de syntaxe par exemple : "lerp(1,2,"   ).
+Pour les placeholder, c'est un peu de la même manière que ceci est réalisé, à la différence que l'on va capturer également les placeholders donnés.
+C'est a l'intérieur de la lambda que l'on va s'occuper de "mapper" chaque argument au bon endroit dans le tableau d'arguments en fonctions des placeholder.
 
-Enfin, une fois le nom de la fonction détecté et son nombre d'arguments calculé, on peux regarder si elle est valide. C'est à dire si une fonction de ce nom existe 
-Dans notre hashmap, avec le même nombre d'arguments si elle n'est pas variadique).
+Nous avons donc les comportements suivants :
 
-toutes les fonctions demandées ont donc pu être implémentées.
+Expr >>>  myfunc = lerp(_1, 3, _2)
+	Function : myfunc
+	Type : ( val * val ) -> val
+Expr >>>  myfunc(0.7, 4)
+	3.7
+
+Il est alors possible même d'inverser l'ordre des arguments avec les placholders :
+
+Expr >>>  myfunc = lerp(_3, _2, _1)
+    Function : myfunc
+    Type : ( val * val * val ) -> val
+Expr >>>  myfunc(4, 3, 0.7)
+    3.7
 
 5) A AMELIORER
 
 A mon sens, Les défauts de ce code ne manquent pas. Il est parfois trop verbeux Mais le temps m'a manqué pour le peaufiner très précisément.
-J'espère avoir le temps pour le rendu final de TP pour le rendre tel que j'aimerai qu'il soit.
 
-Egalement, je trouve la gestion des erreurs satisfaisante, mais elle peut encore être améliorée avec un peu de temps en plus. Par exemple j'ai rajouté le cas :
-
-Expr >>> lerp(1, 2)
-Résultat : Syntax Error : Function : "lerp" with 2 arguments is not defined
-
+Egalement, je trouve la gestion des erreurs satisfaisante, mais elle peut encore être améliorée avec un peu de temps en plus.
 
 
 
