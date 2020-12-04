@@ -73,6 +73,7 @@ FunctionDescriptor buildPlaceHoldedFunc (const Args& firstArgs,
                                      const vector<BindInfo>& placeHolders) {
     auto& baseDescriptor = func->getDescriptor();
     FunctionDescriptor newFunction;
+    newFunction.variadic = baseDescriptor.variadic;
     newFunction.nbArgs = placeHolders.size();
 
     newFunction.fct = [func, firstArgs, baseDescriptor, placeHolders](const Args& lastArgs) -> double {

@@ -52,7 +52,7 @@ pair<optional<unsigned int>, bool> getNbArgs(const string& expr,
     auto movingIndex = lParIndex + 1;
     auto LPARcount = 1;
     auto nbComma = 0;
-    bool placeHolder;
+    bool placeHolder = false;
     bool finished = false;
 
     if((movingIndex < expr.size()) && (expr[movingIndex] == RPAR))
