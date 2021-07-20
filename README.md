@@ -5,4 +5,4 @@ Evaluateur d'xepression mathématiques en C++ orienté Objet Et programmation fo
 
 Prise en charge des parenthèses imbriquées, expressions fonctionnelles, variables ...
 
-Utilisation de Glibc, donc seuelement compilable sous systèmes UNIX / MACOS
+Utilisation de Glibc, donc seulement compilable sous systèmes UNIX / MACOS 
