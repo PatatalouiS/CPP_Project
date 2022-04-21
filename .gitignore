@@ -8,3 +8,4 @@ MakefileQt
 *.test
 ExprApp
 .DS_Store
+*.icloud
